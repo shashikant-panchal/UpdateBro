@@ -4,6 +4,16 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      screens: {
+        '3xl': '1920px',
+        '4xl': '2560px',
+      },
+      maxWidth: {
+        '8xl': '88rem',
+        '9xl': '96rem',
+        '10xl': '108rem',
+        '11xl': '120rem',
+      },
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
         display: ['"Space Grotesk"', '"Plus Jakarta Sans"', 'sans-serif'],

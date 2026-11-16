@@ -22,7 +22,7 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
   };
 
   return (
-    <section id="categories-strip" className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 sm:pt-12 lg:px-8">
+    <section id="categories-strip" className="mx-auto max-w-[1920px] px-4 pt-10 sm:px-6 sm:pt-12 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-muted">
@@ -37,7 +37,7 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-1.5 sm:flex">
+          <div className="hidden items-center gap-1.5 sm:flex 2xl:hidden">
             <button
               type="button"
               onClick={() => scrollRail(-320)}
@@ -67,10 +67,10 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
         </div>
       </div>
 
-      {/* boAt-Inspired Horizontal Strip across 9 Hardware Categories */}
+      {/* boAt-Inspired Strip across 9 Hardware Categories (fluid rail on mobile/laptop, full-width 9-col grid on wide monitors) */}
       <div
         ref={railRef}
-        className="no-scrollbar -mx-4 flex gap-3.5 overflow-x-auto px-4 pb-2 sm:-mx-0 sm:gap-4 sm:px-0"
+        className="no-scrollbar -mx-4 flex gap-3.5 overflow-x-auto px-4 pb-2 sm:-mx-0 sm:gap-4 sm:px-0 2xl:grid 2xl:grid-cols-9 2xl:gap-3.5 3xl:gap-5 2xl:overflow-visible"
       >
         {CATEGORIES.map((cat, idx) => {
           const isActive = activeCategory === cat.id;
@@ -88,7 +88,7 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
               transition={{ duration: 0.3, delay: idx * 0.025 }}
               whileHover={isReduced ? {} : { y: -4 }}
               whileTap={isReduced ? {} : { scale: 0.97 }}
-              className="group flex w-[130px] shrink-0 flex-col items-center text-center sm:w-[145px] lg:w-[155px]"
+              className="group flex w-[130px] shrink-0 flex-col items-center text-center sm:w-[145px] lg:w-[155px] xl:w-[165px] 2xl:w-full"
             >
               {/* Full-Visibility Category Card Banner */}
               <div

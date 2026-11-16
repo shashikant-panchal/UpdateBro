@@ -28,7 +28,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo }) 
 
   return (
     <footer className="mt-16 border-t border-line bg-surface pb-10 pt-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1920px] px-4 sm:px-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
         {/* Newsletter Club Card */}
         <div className="mb-12 rounded-card border border-line bg-gradient-to-r from-cloud via-accent-soft to-cloud p-6 sm:p-8">
           <div className="grid items-center gap-6 lg:grid-cols-12">

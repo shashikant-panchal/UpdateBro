@@ -97,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur-xl transition-colors">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:h-[74px] sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-[1920px] items-center justify-between gap-4 px-4 sm:h-[74px] sm:px-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
           {/* Left: Brand Logo (clean across mobile & desktop) */}
           <a
             href="#top"
@@ -221,7 +221,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Right Controls */}
           <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Desktop Predictive Search */}
-            <div ref={searchRef} className="relative hidden w-60 lg:block xl:w-72">
+            <div ref={searchRef} className="relative hidden w-60 lg:block xl:w-80 2xl:w-96 3xl:w-[420px]">
               <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <input
                 type="text"

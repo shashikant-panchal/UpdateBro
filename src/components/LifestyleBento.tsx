@@ -19,7 +19,7 @@ export const LifestyleBento: React.FC<LifestyleBentoProps> = ({ onSelectLifestyl
   };
 
   return (
-    <section id="lifestyle-bento" className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
+    <section id="lifestyle-bento" className="mx-auto max-w-[1920px] px-4 pt-16 sm:px-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
       <div className="mb-6 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-muted">
@@ -37,7 +37,7 @@ export const LifestyleBento: React.FC<LifestyleBentoProps> = ({ onSelectLifestyl
         </p>
       </div>
 
-      <div className="grid auto-rows-[230px] grid-cols-1 gap-4 md:grid-cols-4 md:auto-rows-[220px]">
+      <div className="grid auto-rows-[230px] grid-cols-1 gap-4 md:grid-cols-4 md:auto-rows-[220px] 2xl:auto-rows-[270px] 3xl:auto-rows-[310px]">
         {LIFESTYLE_TILES.map((tile, idx) => (
           <motion.button
             key={tile.id}

@@ -155,7 +155,7 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
     >
       {/* Sticky Top Category Explorer Toolbar */}
       <div className="sticky top-16 z-30 border-b border-line bg-surface/95 backdrop-blur-md sm:top-[74px]">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2.5 px-3 py-2.5 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-2.5 px-3 py-2.5 sm:px-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
           <div className="flex min-w-0 items-center gap-2.5 sm:gap-3.5">
             <button
               type="button"
@@ -178,7 +178,7 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
 
           <div className="flex shrink-0 items-center gap-2">
             {/* Compact Filter Input inside Explorer */}
-            <div className="relative hidden md:block md:w-52">
+            <div className="relative hidden md:block md:w-60 lg:w-72 xl:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" />
               <input
                 type="text"
@@ -219,11 +219,11 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
       </div>
 
       {/* Blinkit-Style Split View: Long Vertical Left Rail + Right Product Grid */}
-      <div className="mx-auto flex max-w-7xl">
+      <div className="mx-auto flex max-w-[1920px] px-0 md:px-4 lg:px-8 2xl:px-12 3xl:px-16">
         {/* Left Vertical Category Sidebar */}
         <aside
           aria-label="Category list"
-          className="sticky top-[120px] h-[calc(100vh-120px)] w-[88px] shrink-0 overflow-y-auto border-r border-line bg-surface/75 py-2 sm:top-[130px] sm:h-[calc(100vh-130px)] sm:w-[116px] md:w-[235px] no-scrollbar"
+          className="sticky top-[120px] h-[calc(100vh-120px)] w-[88px] shrink-0 overflow-y-auto border-r border-line bg-surface/75 py-2 sm:top-[130px] sm:h-[calc(100vh-130px)] sm:w-[116px] md:w-[235px] lg:w-[260px] 2xl:w-[280px] no-scrollbar"
         >
           <div className="flex flex-col gap-1 px-1 sm:px-2">
             {railCategories.map((cat) => {
@@ -485,7 +485,7 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                   {filteredProducts.map((product) => {
                     const cIdx = selectedColors[product.id] ?? 0;
                     const activeColor = product.colors[cIdx] ?? product.colors[0];

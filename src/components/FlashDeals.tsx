@@ -29,7 +29,7 @@ export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
   };
 
   return (
-    <section id="flash-deals" className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
+    <section id="flash-deals" className="mx-auto max-w-[1920px] px-4 pt-14 sm:px-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
       <div className="rounded-card border border-line bg-gradient-to-br from-surface via-surface to-accent-soft p-5 shadow-soft sm:p-7">
         {/* Header with Live Ticking Countdown */}
         <div className="flex flex-col justify-between gap-4 border-b border-line pb-5 sm:flex-row sm:items-center">

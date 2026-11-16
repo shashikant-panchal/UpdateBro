@@ -81,7 +81,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
   return (
     <section
       id="top"
-      className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8"
+      className="mx-auto max-w-[1920px] px-4 pt-4 sm:px-6 sm:pt-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -111,7 +111,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
             onDragStart={handleDragStart}
             onDrag={handleDrag}
             onDragEnd={handleDragEnd}
-            className="group relative flex aspect-[16/9] min-h-[205px] w-full cursor-pointer items-center overflow-hidden sm:aspect-auto sm:min-h-[395px] lg:min-h-[470px]"
+            className="group relative flex aspect-[16/9] min-h-[205px] w-full cursor-pointer items-center overflow-hidden sm:aspect-auto sm:min-h-[395px] lg:min-h-[470px] 2xl:min-h-[540px] 3xl:min-h-[600px]"
           >
             {/* Full Clear Light Studio Hardware Photography with Gentle Living Breath Motion */}
             <motion.img
@@ -152,7 +152,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/60 via-white/20 via-32% to-transparent sm:from-white/45 sm:via-white/10 sm:via-38%" />
 
             {/* Left-Side Compact Dark Copy (No Buttons — Strictly Left Open Space, Dark Over Light Backdrop) */}
-            <div className="relative z-10 w-[45%] max-w-[45%] pb-6 pl-3.5 pr-1 pt-3 sm:w-auto sm:max-w-[44%] sm:px-9 sm:py-12 lg:max-w-[42%] lg:px-12">
+            <div className="relative z-10 w-[45%] max-w-[45%] pb-6 pl-3.5 pr-1 pt-3 sm:w-auto sm:max-w-[44%] sm:px-9 sm:py-12 lg:max-w-[42%] lg:px-12 2xl:max-w-[40%] 2xl:px-16 3xl:px-20">
               <motion.div
                 initial={isReduced ? {} : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -167,7 +167,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
                 initial={isReduced ? {} : { opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.42, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-1.5 font-display text-[17px] font-extrabold leading-[1.12] tracking-tight text-[#14171F] sm:mt-3 sm:text-3xl lg:text-[42px]"
+                className="mt-1.5 font-display text-[17px] font-extrabold leading-[1.12] tracking-tight text-[#14171F] sm:mt-3 sm:text-3xl lg:text-[42px] 2xl:text-[50px] 3xl:text-[56px]"
               >
                 {slide.title}
               </motion.h1>
@@ -183,7 +183,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
                 initial={isReduced ? {} : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.44, delay: 0.14 }}
-                className="mt-1.5 line-clamp-2 text-[10px] font-semibold leading-snug text-[#3F4554] sm:mt-3 sm:line-clamp-none sm:text-sm sm:leading-relaxed lg:text-[15px]"
+                className="mt-1.5 line-clamp-2 text-[10px] font-semibold leading-snug text-[#3F4554] sm:mt-3 sm:line-clamp-none sm:text-sm sm:leading-relaxed lg:text-[15px] 2xl:text-[17px]"
               >
                 {slide.subtitle}
               </motion.p>

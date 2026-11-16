@@ -108,7 +108,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   };
 
   return (
-    <section id="catalog-section" className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
+    <section id="catalog-section" className="mx-auto max-w-[1920px] px-4 pt-14 sm:px-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
       {/* Header + Controls */}
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
@@ -299,7 +299,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
           </button>
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} onQuickView={onQuickView} />
           ))}

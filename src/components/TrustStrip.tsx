@@ -34,7 +34,7 @@ export const TrustStrip: React.FC = () => {
   const { isReduced } = useMotionConfig();
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-[1920px] px-4 pt-16 sm:px-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {TRUST_BADGES.map((item, idx) => {
           const Icon = item.icon;

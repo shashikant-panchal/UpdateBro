@@ -27,7 +27,7 @@ export const CombosSection: React.FC<CombosSectionProps> = ({ onQuickView }) => 
   };
 
   return (
-    <section id="combos-section" className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
+    <section id="combos-section" className="mx-auto max-w-[1920px] px-4 pt-16 sm:px-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
       <div className="mb-6 flex items-end justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-muted">
