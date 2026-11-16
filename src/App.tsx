@@ -134,17 +134,10 @@ const StorefrontShell: React.FC = () => {
           isPersonalizationOpen={isPersonalizationOpen}
         />
 
-        {/* Personalization Studio Sheet */}
+        {/* Personalization Theme Sheet */}
         <PersonalizationModal
           isOpen={isPersonalizationOpen}
           onClose={() => setIsPersonalizationOpen(false)}
-          onSelectLifestyle={(tag) => {
-            setActiveCategory('all');
-            setActiveLifestyle(tag);
-            setActiveView('home');
-            const el = document.getElementById('lifestyle-bento');
-            el?.scrollIntoView({ behavior: 'smooth' });
-          }}
         />
       </div>
     </MotionConfig>
