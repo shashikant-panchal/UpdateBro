@@ -8,9 +8,10 @@ import type { InfoModalTopic } from './InfoModal';
 interface FooterProps {
   onSelectCategory: (cat: CategoryId) => void;
   onOpenInfo: (topic: Exclude<InfoModalTopic, null>) => void;
+  onReplayIntro?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo }) => {
+export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, onReplayIntro }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -142,6 +143,17 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo }) 
                   </button>
                 </li>
               ))}
+              {onReplayIntro && (
+                <li>
+                  <button
+                    type="button"
+                    onClick={onReplayIntro}
+                    className="inline-flex items-center gap-1.5 text-left font-bold text-accent transition hover:underline"
+                  >
+                    <span>▶ Watch Brand Intro</span>
+                  </button>
+                </li>
+              )}
               <li>
                 <button
                   type="button"

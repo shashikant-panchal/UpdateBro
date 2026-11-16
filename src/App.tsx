@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MotionConfig } from 'framer-motion';
+import { AnimatePresence, MotionConfig } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { CartProvider } from './context/CartContext';
 import { useMotionConfig } from './hooks/useMotionConfig';
@@ -18,10 +18,12 @@ import { Footer } from './components/Footer';
 import { QuickViewModal } from './components/QuickViewModal';
 import { CartDrawer } from './components/CartDrawer';
 import { InfoModal, type InfoModalTopic } from './components/InfoModal';
+import { IntroVideo } from './components/IntroVideo';
 
 const StorefrontShell: React.FC = () => {
   const { isReduced } = useMotionConfig();
 
+  const [showIntro, setShowIntro] = useState(true);
   const [activeView, setActiveView] = useState<'home' | 'category'>('home');
   const [activeCategory, setActiveCategory] = useState<CategoryId>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,6 +43,12 @@ const StorefrontShell: React.FC = () => {
 
   return (
     <MotionConfig reducedMotion={isReduced ? 'always' : 'user'}>
+      <AnimatePresence>
+        {showIntro && (
+          <IntroVideo onFinished={() => setShowIntro(false)} />
+        )}
+      </AnimatePresence>
+
       <div className="min-h-screen bg-canvas text-ink transition-colors duration-200">
         <TopMarquee />
 
@@ -104,6 +112,7 @@ const StorefrontShell: React.FC = () => {
         <Footer
           onSelectCategory={handleOpenCategory}
           onOpenInfo={setInfoTopic}
+          onReplayIntro={() => setShowIntro(true)}
         />
 
         <QuickViewModal
