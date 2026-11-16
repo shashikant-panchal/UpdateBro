@@ -19,6 +19,8 @@ import { QuickViewModal } from './components/QuickViewModal';
 import { CartDrawer } from './components/CartDrawer';
 import { InfoModal, type InfoModalTopic } from './components/InfoModal';
 import { IntroVideo } from './components/IntroVideo';
+import { MobileBottomNav } from './components/MobileBottomNav';
+import { PersonalizationModal } from './components/PersonalizationModal';
 
 const StorefrontShell: React.FC = () => {
   const { isReduced } = useMotionConfig();
@@ -30,6 +32,7 @@ const StorefrontShell: React.FC = () => {
   const [activeLifestyle, setActiveLifestyle] = useState<string | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [infoTopic, setInfoTopic] = useState<InfoModalTopic>(null);
+  const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false);
 
   const handleOpenCategory = (cat: CategoryId) => {
     setActiveCategory(cat);
@@ -49,7 +52,7 @@ const StorefrontShell: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-canvas text-ink transition-colors duration-200">
+      <div className="min-h-screen bg-canvas text-ink transition-colors duration-200 pb-20 lg:pb-0">
         <TopMarquee />
 
         <Navbar
@@ -121,6 +124,28 @@ const StorefrontShell: React.FC = () => {
         />
         <CartDrawer />
         <InfoModal topic={infoTopic} onClose={() => setInfoTopic(null)} />
+
+        {/* Mobile View Bottom Navigation Tabs */}
+        <MobileBottomNav
+          activeView={activeView}
+          onGoHome={handleBackHome}
+          onOpenCategories={() => handleOpenCategory('all')}
+          onOpenPersonalization={() => setIsPersonalizationOpen(true)}
+          isPersonalizationOpen={isPersonalizationOpen}
+        />
+
+        {/* Personalization Studio Sheet */}
+        <PersonalizationModal
+          isOpen={isPersonalizationOpen}
+          onClose={() => setIsPersonalizationOpen(false)}
+          onSelectLifestyle={(tag) => {
+            setActiveCategory('all');
+            setActiveLifestyle(tag);
+            setActiveView('home');
+            const el = document.getElementById('lifestyle-bento');
+            el?.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
       </div>
     </MotionConfig>
   );
