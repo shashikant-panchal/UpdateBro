@@ -154,6 +154,23 @@ export const CATEGORIES: CategoryMeta[] = [
     },
     count: 3,
   },
+  {
+    id: 'bnc',
+    label: 'BNC Cables',
+    shortLabel: 'BNC',
+    tagline: 'HD Video & CCTV Coaxial',
+    pastelTint: '#EEF1F6',
+    image: '/assets/categories/bnc.jpg',
+    sampleModel: 'cable-100w-usbc',
+    sampleColor: {
+      id: 'white',
+      name: 'Arctic White',
+      hex: '#FFFFFF',
+      secondaryHex: '#E2E8F0',
+      detailHex: '#FF6A00',
+    },
+    count: 1,
+  },
 ];
 
 export const PRODUCTS: Product[] = [
@@ -936,6 +953,42 @@ export const PRODUCTS: Product[] = [
     inBox: ['UB AirCharge Desk Pad', '1.5m Braided USB-C Cable', 'Microfiber Wipe'],
     description:
       'Clutter-free architectural desk organizer tray with integrated 15W wireless pad—rest your UB headphones, earbuds case, or smartphone seamlessly.',
+  },
+  // 10. BNC VIDEO CABLES
+  {
+    id: 'ub-bnc-cable-01',
+    sku: 'UB-BNC-HD1',
+    name: 'UB UltraLink BNC Video Cable',
+    subtitle: '75Ω Gold-Plated Male-to-Male HD Coaxial',
+    category: 'bnc',
+    categoryLabel: 'BNC Cables',
+    hardwareModel: 'cable-100w-usbc',
+    image: '/assets/products/ub-bnc-01.jpg',
+    price: 499,
+    mrp: 1299,
+    discountPercent: 62,
+    rating: 4.9,
+    reviewsCount: 840,
+    badge: 'NEW DROP',
+    badgeTone: 'mint',
+    highlightBar: '75Ω Low Loss • Gold Pin',
+    isFlashDeal: false,
+    lifestyleTags: ['wfh'],
+    colors: [
+      { id: 'white', name: 'Polar White', hex: '#FFFFFF', secondaryHex: '#E2E8F0', detailHex: '#FF6A00' },
+      { id: 'black', name: 'Matte Obsidian', hex: '#1E2028', secondaryHex: '#333742', detailHex: '#FF6A00' },
+    ],
+    specs: [
+      { label: 'Impedance', value: '75 Ohm Low-Loss Coaxial' },
+      { label: 'Connector Type', value: 'BNC Male to Male Gold-Plated' },
+      { label: 'Shielding', value: 'Dual Shield (Oxygen-Free Copper + Foil)' },
+      { label: 'Resolution Support', value: '4K / 3G-SDI / HD-TVI / AHD / CVI' },
+      { label: 'Durability', value: 'Reinforced Strain Relief • 10,000+ Bends' },
+    ],
+    warranty: '1-Year Instant Replacement Warranty across 700+ Centers',
+    inBox: ['UB UltraLink BNC Video Cable', 'Protective Dust Caps', 'UB Warranty Card'],
+    description:
+      'Engineered for studio broadcasting, CCTV security systems, and high-definition SDI/BNC video feeds. Precision brass connectors with 24K gold-plated center pins ensure zero signal attenuation and interference-free transmission.',
   },
 ];
 

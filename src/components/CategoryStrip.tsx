@@ -68,10 +68,10 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
         </div>
       </div>
 
-      {/* boAt-Inspired Strip across 9 Hardware Categories (fluid rail on mobile/laptop, full-width 9-col grid on wide monitors) */}
+      {/* boAt-Inspired Strip across 10 Hardware Categories (fluid rail on mobile/laptop, full-width 10-col grid on wide monitors) */}
       <div
         ref={railRef}
-        className="no-scrollbar -mx-4 flex gap-3.5 overflow-x-auto px-4 pb-2 sm:-mx-0 sm:gap-4 sm:px-0 2xl:grid 2xl:grid-cols-9 2xl:gap-3.5 3xl:gap-5 2xl:overflow-visible"
+        className="no-scrollbar -mx-4 flex gap-3.5 overflow-x-auto px-4 pb-2 sm:-mx-0 sm:gap-4 sm:px-0 2xl:grid 2xl:grid-cols-10 2xl:gap-3 3xl:gap-4 2xl:overflow-visible"
       >
         {CATEGORIES.map((cat, idx) => {
           const isActive = activeCategory === cat.id;

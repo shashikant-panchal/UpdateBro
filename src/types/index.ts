@@ -12,6 +12,7 @@ export type CategoryId =
   | 'chargers'
   | 'cables'
   | 'power-banks'
+  | 'bnc'
   | 'car-accessories'
   | 'cases-stands'
   | 'fast-chargers'
