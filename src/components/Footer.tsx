@@ -245,7 +245,6 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
                 </button>
               </li>
             </ul>
-            <p className="mt-4 font-mono text-xs text-muted">Support: care@updatebro.in</p>
           </div>
         </div>
 
