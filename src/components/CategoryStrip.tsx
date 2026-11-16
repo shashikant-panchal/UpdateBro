@@ -4,6 +4,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { CATEGORIES, PRODUCTS } from '../data/catalog';
 import { useMotionConfig } from '../hooks/useMotionConfig';
 import type { CategoryId } from '../types';
+import { Tilt3DCard } from './motion/Tilt3DCard';
 
 interface CategoryStripProps {
   activeCategory: CategoryId;
@@ -78,31 +79,30 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
           const isComingSoon = productCount === 0;
 
           return (
-            <motion.button
+            <motion.div
               key={cat.id}
-              type="button"
-              onClick={() => onSelectCategory(cat.id)}
               initial={isReduced ? {} : { opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.3, delay: idx * 0.025 }}
-              whileHover={isReduced ? {} : { y: -4 }}
-              whileTap={isReduced ? {} : { scale: 0.97 }}
-              className="group flex w-[130px] shrink-0 flex-col items-center text-center sm:w-[145px] lg:w-[155px] xl:w-[165px] 2xl:w-full"
+              className="w-[130px] shrink-0 sm:w-[145px] lg:w-[155px] xl:w-[165px] 2xl:w-full"
             >
-              {/* Full-Visibility Category Card Banner */}
-              <div
-                className={`relative aspect-[915/1024] w-full overflow-hidden rounded-2xl border transition-all duration-300 bg-white ${
+              <Tilt3DCard
+                maxTilt={10}
+                scaleOnHover={1.03}
+                glareOpacity={0.2}
+                onClick={() => onSelectCategory(cat.id)}
+                className={`relative aspect-[915/1024] w-full overflow-hidden rounded-2xl border transition-all duration-300 bg-white cursor-pointer ${
                   isActive
                     ? 'border-accent ring-2 ring-accent/70 shadow-glow'
-                    : 'border-line shadow-soft group-hover:border-accent group-hover:shadow-glow'
+                    : 'border-line shadow-soft hover:border-accent hover:shadow-glow'
                 }`}
               >
                 <img
                   src={cat.image}
                   alt={cat.label}
                   loading="lazy"
-                  className="h-full w-full object-contain p-1 transition-transform duration-500 group-hover:scale-[1.03]"
+                  className="h-full w-full object-contain p-1 transition-transform duration-500 hover:scale-[1.03]"
                 />
 
                 {isComingSoon && (
@@ -110,12 +110,8 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
                     Soon
                   </span>
                 )}
-              </div>
-
-              <span className="sr-only">
-                {cat.label}
-              </span>
-            </motion.button>
+              </Tilt3DCard>
+            </motion.div>
           );
         })}
       </div>

@@ -96,7 +96,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                   <span className="rounded-full bg-surface px-3 py-1 font-mono text-[11px] font-bold text-muted">
                     {product.sku}
                   </span>
-                  <BrandLogo variant="monogramReg" className="h-5 w-auto text-ink opacity-50" />
+                  <BrandLogo variant="horizontal" className="h-5 w-auto" />
                 </div>
 
                 <motion.div
@@ -163,7 +163,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                     <span className="font-mono text-sm text-muted line-through">
                       ₹{product.mrp.toLocaleString('en-IN')}
                     </span>
-                    <span className="rounded-full bg-[#7ED4AD]/25 px-2.5 py-0.5 text-xs font-extrabold text-[#165C3D] dark:text-[#8CE0B9]">
+                    <span className="rounded-full bg-accent/20 px-2.5 py-0.5 text-xs font-extrabold text-accent">
                       SAVE {product.discountPercent}%
                     </span>
                   </div>

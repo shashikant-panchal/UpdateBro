@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import {
+  AnimatePresence,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
 import { Check, Eye, ShoppingBag, Star } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useMotionConfig } from '../hooks/useMotionConfig';
@@ -12,9 +19,9 @@ interface ProductCardProps {
 }
 
 const BADGE_STYLES: Record<NonNullable<Product['badgeTone']>, string> = {
-  mint: 'bg-accent text-accent-ink',
+  mint: 'bg-accent text-accent-ink font-extrabold',
   lavender: 'bg-[#181B24]/90 text-white dark:bg-[#2C3142] dark:text-[#F3F5F8]',
-  peach: 'bg-[#E5533D]/15 text-[#B4321E] dark:bg-[#FF735C]/20 dark:text-[#FF9E8D]',
+  peach: 'bg-accent/20 text-accent font-extrabold',
   sky: 'bg-[#1B5B85]/15 text-[#134263] dark:bg-[#4FA6DB]/20 dark:text-[#98D2F5]',
 };
 
@@ -40,6 +47,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
   const sy = useSpring(my, { stiffness: 260, damping: 24 });
   const rotateX = useTransform(sy, [-0.5, 0.5], [7, -7]);
   const rotateY = useTransform(sx, [-0.5, 0.5], [-7, 7]);
+  const glareX = useTransform(sx, [-0.5, 0.5], ['15%', '85%']);
+  const glareY = useTransform(sy, [-0.5, 0.5], ['15%', '85%']);
+  const glareOpacity = useTransform(
+    [sx, sy],
+    ([x, y]: number[]) => Math.min(0.24, Math.sqrt(x * x + y * y) * 0.6)
+  );
+  const glareBg = useMotionTemplate`radial-gradient(circle at ${glareX} ${glareY}, rgba(255,255,255,0.38) 0%, transparent 65%)`;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!activeTilt) return;
@@ -81,6 +95,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
       transition={{ duration: 0.35 }}
       className="group relative flex flex-col overflow-hidden rounded-card border border-line bg-surface shadow-soft transition-colors hover:border-accent"
     >
+      {/* Dynamic Specular Glare Sheen */}
+      {activeTilt && !isReduced && (
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-200"
+          style={{
+            opacity: glareOpacity,
+            background: glareBg,
+          }}
+        />
+      )}
+
       {/* Top Real-Photo Studio Stage */}
       <div className="relative flex flex-col bg-cloud/60">
         {/* Top-Left Pill Badge & Top-Right Quick View */}
@@ -196,7 +221,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
                 ₹{product.mrp.toLocaleString('en-IN')}
               </span>
             </div>
-            <span className="text-[11px] font-bold text-[#1B8A5A] dark:text-[#8CE0B9]">
+            <span className="text-[11px] font-extrabold text-accent">
               {product.discountPercent}% OFF
             </span>
           </div>

@@ -83,7 +83,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
         {/* Multi-Column Links */}
         <div className="grid grid-cols-1 gap-8 pb-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <BrandLogo className="text-ink" />
+            <BrandLogo variant="full" className="text-ink" />
             <p className="mt-3 text-xs leading-relaxed text-muted sm:text-sm">
               Engineered for everyday creators, gamers, and commuters. Soft-touch aesthetics meet
               GaN III power and precision acoustics.

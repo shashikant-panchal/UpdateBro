@@ -3,6 +3,7 @@ import { AnimatePresence, MotionConfig } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { CartProvider } from './context/CartContext';
 import { useMotionConfig } from './hooks/useMotionConfig';
+import { useLenis } from './hooks/useLenis';
 import type { CategoryId, Product } from './types';
 import { TopMarquee } from './components/TopMarquee';
 import { Navbar } from './components/Navbar';
@@ -24,6 +25,7 @@ import { PersonalizationModal } from './components/PersonalizationModal';
 
 const StorefrontShell: React.FC = () => {
   const { isReduced } = useMotionConfig();
+  useLenis(!isReduced);
 
   const [showIntro, setShowIntro] = useState(true);
   const [activeView, setActiveView] = useState<'home' | 'category'>('home');
