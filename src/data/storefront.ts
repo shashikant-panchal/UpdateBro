@@ -175,9 +175,10 @@ export const POWER_COMBOS: BundleCombo[] = [
 ];
 
 export const MARQUEE_MESSAGES = [
-  '⚡ Free Express Shipping above ₹499',
+  '⚡ UPDATE BRO® — Power Your World • Powered by NEXGENTEQ',
   '🛡️ 1-Year Instant Replacement Warranty across 700+ Centers',
   '🎁 Use Code UPDATE10 for Flat 10% OFF at Checkout',
+  '🏭 Manufactured in Hyderabad, Telangana, India • www.updatebro.in',
+  '⚡ NEXGENTEQ – Manufacturing Technology • UPDATE BRO – Powering Connections',
   '🚀 Same-Day Dispatch on Orders before 4 PM IST',
-  '🧾 100% GST Tax Invoice Available on All Business Orders',
 ];

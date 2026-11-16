@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2, ShieldCheck, X } from 'lucide-react';
 
 export type InfoModalTopic =
+  | 'about'
   | 'warranty'
   | 'replacement'
   | 'shipping'
@@ -19,6 +20,17 @@ const TOPIC_COPY: Record<
   Exclude<InfoModalTopic, null>,
   { title: string; subtitle: string; points: string[] }
 > = {
+  about: {
+    title: 'UPDATE BRO® — Power Your World',
+    subtitle: 'Next-generation mobile accessories manufactured & powered by NEXGENTEQ.',
+    points: [
+      'UPDATE BRO is a next-generation mobile accessories brand, manufactured and powered by NEXGENTEQ.',
+      'We specialize in innovative mobile accessories, including fast chargers, data cables, power banks, car chargers, TWS earbuds and connectivity solutions.',
+      'Our mission is to deliver quality, performance, reliability and modern technology at affordable prices.',
+      'NEXGENTEQ – Manufacturing Technology.',
+      'UPDATE BRO – Powering Connections.',
+    ],
+  },
   warranty: {
     title: '1-Year Instant Replacement Warranty',
     subtitle: 'Register your UPDATE BRO® serial number in 15 seconds for priority service.',
@@ -125,6 +137,33 @@ export const InfoModal: React.FC<InfoModalProps> = ({ topic, onClose }) => {
                 </li>
               ))}
             </ul>
+
+            {topic === 'about' && (
+              <div className="mt-4 rounded-xl border border-line bg-cloud/70 p-3.5 text-xs">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <span className="text-[11px] font-semibold text-muted">Brand</span>
+                    <p className="font-bold text-ink">UPDATE BRO®</p>
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-muted">Manufacturer</span>
+                    <p className="font-bold text-accent">NEXGENTEQ</p>
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-muted">Location</span>
+                    <p className="font-medium text-ink">Hyderabad, Telangana, India</p>
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-muted">Official Website</span>
+                    <p className="font-mono font-bold text-accent">www.updatebro.in</p>
+                  </div>
+                </div>
+                <div className="mt-3 border-t border-line/60 pt-2 text-[11px] text-muted">
+                  <p><span className="font-bold text-ink">NEXGENTEQ</span> – Manufacturing Technology.</p>
+                  <p><span className="font-bold text-accent">UPDATE BRO</span> – Powering Connections.</p>
+                </div>
+              </div>
+            )}
 
             {topic === 'warranty' && (
               <form onSubmit={handleSubmit} className="mt-5 rounded-btn border border-line bg-cloud p-3.5">

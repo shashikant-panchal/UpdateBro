@@ -75,6 +75,31 @@ export const TrustStrip: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Brand & Manufacturing Highlight Banner */}
+      <div className="mt-6 rounded-card border border-line bg-gradient-to-r from-surface via-accent-soft to-surface p-4 sm:p-5 shadow-soft">
+        <div className="flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
+          <div>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+              <span className="font-display text-sm font-black text-ink">UPDATE BRO®</span>
+              <span className="text-xs text-muted">•</span>
+              <span className="text-xs font-extrabold text-accent">Power Your World.</span>
+              <span className="text-xs text-muted">•</span>
+              <span className="text-xs font-semibold text-muted">
+                Manufactured &amp; Powered by <strong className="text-ink">NEXGENTEQ</strong>
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-muted">
+              Hyderabad, Telangana, India • Delivering quality, performance, reliability and modern technology at affordable prices.
+            </p>
+          </div>
+          <div className="shrink-0 text-xs font-bold">
+            <span className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-ink shadow-sm">
+              🌐 www.updatebro.in
+            </span>
+          </div>
+        </div>
+      </div>
     </section>
   );
 };

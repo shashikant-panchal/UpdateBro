@@ -189,6 +189,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                         </button>
                       ))}
                     </div>
+
+                    <div className="mt-3 flex items-center justify-between border-t border-line pt-2.5 text-[10px] text-muted">
+                      <span>
+                        <strong className="text-ink">UPDATE BRO®</strong> • Manufactured by{' '}
+                        <strong className="text-accent">NEXGENTEQ</strong> (Hyderabad)
+                      </span>
+                      <a
+                        href="https://www.updatebro.in"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono font-bold text-accent hover:underline"
+                      >
+                        www.updatebro.in
+                      </a>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -292,6 +307,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                           </span>
                         </button>
                       ))}
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between border-t border-line pt-2.5 text-[10px] text-muted">
+                      <span>
+                        <strong className="text-ink">UPDATE BRO®</strong> • Manufactured by{' '}
+                        <strong className="text-accent">NEXGENTEQ</strong> (Hyderabad)
+                      </span>
+                      <a
+                        href="https://www.updatebro.in"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono font-bold text-accent hover:underline"
+                      >
+                        www.updatebro.in
+                      </a>
                     </div>
                   </motion.div>
                 )}
@@ -445,6 +475,35 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <ArrowRight className="h-3.5 w-3.5 text-muted" />
                     </button>
                   ))}
+                </div>
+
+                {/* Brand & Corporate Details */}
+                <div className="rounded-2xl border border-line bg-cloud/60 p-3.5 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-ink">UPDATE BRO®</span>
+                    <span className="text-[10px] font-black uppercase text-accent">Power Your World.</span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-muted">
+                    Manufactured &amp; powered by <strong className="text-ink">NEXGENTEQ</strong>
+                  </p>
+                  <div className="mt-2 text-[10px] text-muted space-y-0.5 border-t border-line/60 pt-2">
+                    <p>📍 Hyderabad, Telangana, India</p>
+                    <p>
+                      🌐{' '}
+                      <a
+                        href="https://www.updatebro.in"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono text-accent hover:underline"
+                      >
+                        www.updatebro.in
+                      </a>
+                    </p>
+                  </div>
+                  <div className="mt-2 text-[9px] text-muted/80">
+                    <p>NEXGENTEQ – Manufacturing Technology.</p>
+                    <p>UPDATE BRO – Powering Connections.</p>
+                  </div>
                 </div>
               </div>
             </motion.aside>
