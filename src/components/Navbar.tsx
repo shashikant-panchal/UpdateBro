@@ -126,9 +126,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <span>Categories</span>
                 <ChevronDown
-                  className={`h-4 w-4 text-muted transition-transform duration-200 ${
-                    isMegaOpen ? 'rotate-180 text-accent' : ''
-                  }`}
+                  className={`h-4 w-4 text-muted transition-transform duration-200 ${isMegaOpen ? 'rotate-180 text-accent' : ''
+                    }`}
                 />
               </button>
 
@@ -162,11 +161,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                           key={cat.id}
                           type="button"
                           onClick={() => handlePickCategory(cat.id)}
-                          className={`flex items-center gap-3 rounded-xl border p-2 text-left transition ${
-                            activeCategory === cat.id
+                          className={`flex items-center gap-3 rounded-xl border p-2 text-left transition ${activeCategory === cat.id
                               ? 'border-accent bg-accent/10 shadow-sm'
                               : 'border-transparent bg-cloud/40 hover:border-accent/40 hover:bg-cloud'
-                          }`}
+                            }`}
                         >
                           <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-line bg-surface p-0.5">
                             <img
@@ -442,11 +440,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                         key={m}
                         type="button"
                         onClick={() => setMode(m)}
-                        className={`flex h-9 items-center justify-center rounded-xl border text-xs font-bold capitalize transition ${
-                          mode === m
+                        className={`flex h-9 items-center justify-center rounded-xl border text-xs font-bold capitalize transition ${mode === m
                             ? 'border-accent bg-accent text-accent-ink'
                             : 'border-line bg-cloud text-ink'
-                        }`}
+                          }`}
                       >
                         {m}
                       </button>
@@ -487,9 +484,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     Manufactured &amp; powered by <strong className="text-ink">NEXGENTEQ</strong>
                   </p>
                   <div className="mt-2 text-[10px] text-muted space-y-0.5 border-t border-line/60 pt-2">
-                    <p>📍 Hyderabad, Telangana, India</p>
+                    <p>{' '}Hyderabad, Telangana, India</p>
                     <p>
-                      🌐{' '}
+                      {' '}
                       <a
                         href="https://www.updatebro.in"
                         target="_blank"
