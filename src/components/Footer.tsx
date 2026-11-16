@@ -108,17 +108,6 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
                 <span className="text-muted">Location:</span>
                 <span className="font-medium text-ink">Hyderabad, Telangana, India</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted">Website:</span>
-                <a
-                  href="https://www.updatebro.in"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-mono font-bold text-accent hover:underline"
-                >
-                  www.updatebro.in
-                </a>
-              </div>
             </div>
 
             {/* Slogan Lockup */}
