@@ -82,7 +82,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative overflow-hidden rounded-card border border-line bg-[#0B0D11] shadow-soft">
+      <div className="relative overflow-hidden rounded-card border border-line bg-black shadow-soft">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={slide.id}
@@ -108,25 +108,13 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
             onDragStart={handleDragStart}
             onDrag={handleDrag}
             onDragEnd={handleDragEnd}
-            className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden h-[200px] sm:h-[260px] md:h-[310px] lg:h-[360px] xl:h-[390px] 2xl:h-[410px]"
+            className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden h-[200px] sm:h-[260px] md:h-[320px] lg:h-[370px] xl:h-[400px] 2xl:h-[430px]"
           >
-            {/* Ambient Matching Glow for wide desktop screens so it blends seamlessly */}
-            <div
-              className="pointer-events-none absolute inset-0 overflow-hidden opacity-30 blur-2xl select-none"
-              aria-hidden="true"
-            >
-              <img
-                src={slide.image}
-                alt=""
-                className="h-full w-full object-cover object-center scale-110"
-              />
-            </div>
-
-            {/* Main Sharp Complete Banner Image: 100% visible, zero cropping on all devices */}
+            {/* Pure, Clean Banner Image: Fills card edge-to-edge without extra side bars or blur */}
             <img
               src={slide.image}
               alt={featuredProduct?.name ?? slide.title}
-              className="relative z-10 pointer-events-none h-full w-full object-contain object-center select-none"
+              className="pointer-events-none h-full w-full object-cover object-center select-none"
             />
           </motion.div>
         </AnimatePresence>
