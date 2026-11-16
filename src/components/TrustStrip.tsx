@@ -93,11 +93,6 @@ export const TrustStrip: React.FC = () => {
               Hyderabad, Telangana, India • Delivering quality, performance, reliability and modern technology at affordable prices.
             </p>
           </div>
-          <div className="shrink-0 text-xs font-bold">
-            <span className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-ink shadow-sm">
-              🌐 www.updatebro.in
-            </span>
-          </div>
         </div>
       </div>
     </section>
