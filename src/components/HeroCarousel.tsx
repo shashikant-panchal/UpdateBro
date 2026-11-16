@@ -15,15 +15,18 @@ const SLIDE_DURATION_MS = 2000;
 const slideVariants = {
   enter: (dir: number) => ({
     opacity: 0,
-    x: dir > 0 ? 35 : -35,
+    zIndex: 2,
+    x: dir > 0 ? 30 : -30,
   }),
   center: {
     opacity: 1,
+    zIndex: 2,
     x: 0,
   },
   exit: (dir: number) => ({
     opacity: 0,
-    x: dir > 0 ? -35 : 35,
+    zIndex: 1,
+    x: dir > 0 ? -30 : 30,
   }),
 };
 
@@ -82,8 +85,8 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative overflow-hidden rounded-card border border-line bg-black shadow-soft">
-        <AnimatePresence mode="wait" custom={direction}>
+      <div className="relative w-full overflow-hidden rounded-card border border-line bg-surface shadow-soft aspect-[2.1/1] sm:aspect-[2.4/1] md:aspect-[2.7/1] lg:aspect-[1920/640]">
+        <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={slide.id}
             custom={direction}
@@ -91,7 +94,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
             initial={isReduced ? { opacity: 1 } : 'enter'}
             animate="center"
             exit={isReduced ? { opacity: 1 } : 'exit'}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
             role="button"
             tabIndex={0}
             aria-label={`View details for ${featuredProduct?.name ?? slide.title}`}
@@ -108,7 +111,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
             onDragStart={handleDragStart}
             onDrag={handleDrag}
             onDragEnd={handleDragEnd}
-            className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden aspect-[2.1/1] sm:aspect-[2.4/1] md:aspect-[2.7/1] lg:aspect-[1920/640]"
+            className="group absolute inset-0 flex h-full w-full cursor-pointer items-center justify-center overflow-hidden"
           >
             {/* Widescreen Studio Banner: Displays full banner at banner resolution without cropping */}
             <img
