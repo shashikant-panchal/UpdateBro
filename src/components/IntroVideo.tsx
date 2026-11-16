@@ -15,7 +15,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
 
     const videoEl = videoRef.current;
     if (videoEl) {
-      videoEl.playbackRate = 2.0;
+      videoEl.playbackRate = 2.5;
       videoEl.muted = false;
       videoEl.volume = 1.0;
 
@@ -25,7 +25,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
           // If browser restricts unmuted autoplay before user interaction,
           // play with muted=true so video playback begins immediately without freezing
           if (videoRef.current) {
-            videoRef.current.playbackRate = 2.0;
+            videoRef.current.playbackRate = 2.5;
             videoRef.current.muted = true;
             videoRef.current.play().catch(() => {});
           }
@@ -33,11 +33,11 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
       }
     }
 
-    // Auto-unmute and ensure sound plays upon any user interaction at 2X speed
+    // Auto-unmute and ensure sound plays upon any user interaction at 2.5X speed
     const ensureAudio = () => {
       const video = videoRef.current;
       if (video) {
-        video.playbackRate = 2.0;
+        video.playbackRate = 2.5;
         if (video.muted) {
           video.muted = false;
         }
@@ -54,10 +54,10 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
     window.addEventListener('click', ensureAudio, { passive: true });
     window.addEventListener('keydown', ensureAudio, { passive: true });
 
-    // Safety fallback: at 2X speed video finishes in ~3.2s, smoothly proceed if not finished in 3.8s
+    // Safety fallback: at 2.5X speed video finishes in ~2.6s, smoothly proceed if not finished in 3.2s
     const timer = setTimeout(() => {
       onFinished();
-    }, 3800);
+    }, 3200);
 
     return () => {
       document.body.style.overflow = originalOverflow;
@@ -73,7 +73,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
   const handlePointerInteraction = () => {
     const video = videoRef.current;
     if (video) {
-      video.playbackRate = 2.0;
+      video.playbackRate = 2.5;
       if (video.muted) {
         video.muted = false;
       }
@@ -95,7 +95,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
       className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-black select-none cursor-pointer"
     >
       {/* 
-        Responsive Edge-to-Edge Intro Video (Plays at 2X speed):
+        Responsive Edge-to-Edge Intro Video (Plays at 2.5X speed):
         - Landscape (desktop monitors, laptops, landscape tablets/phones): 'landscape:object-cover' fills the screen edge-to-edge.
         - Mobile Portrait: 'portrait:object-contain' displays the full video width edge-to-edge without cutting off any content on the sides.
         - Clean presentation: No buttons, badges, or overlays.
@@ -108,12 +108,12 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
         preload="auto"
         onLoadedMetadata={() => {
           if (videoRef.current) {
-            videoRef.current.playbackRate = 2.0;
+            videoRef.current.playbackRate = 2.5;
           }
         }}
         onPlay={() => {
           if (videoRef.current) {
-            videoRef.current.playbackRate = 2.0;
+            videoRef.current.playbackRate = 2.5;
           }
         }}
         onEnded={onFinished}
