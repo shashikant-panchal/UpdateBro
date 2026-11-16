@@ -15,6 +15,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
 
     const videoEl = videoRef.current;
     if (videoEl) {
+      videoEl.playbackRate = 2.0;
       videoEl.muted = false;
       videoEl.volume = 1.0;
 
@@ -24,6 +25,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
           // If browser restricts unmuted autoplay before user interaction,
           // play with muted=true so video playback begins immediately without freezing
           if (videoRef.current) {
+            videoRef.current.playbackRate = 2.0;
             videoRef.current.muted = true;
             videoRef.current.play().catch(() => {});
           }
@@ -31,10 +33,11 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
       }
     }
 
-    // Auto-unmute and ensure sound plays upon any user interaction
+    // Auto-unmute and ensure sound plays upon any user interaction at 2X speed
     const ensureAudio = () => {
       const video = videoRef.current;
       if (video) {
+        video.playbackRate = 2.0;
         if (video.muted) {
           video.muted = false;
         }
@@ -51,10 +54,10 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
     window.addEventListener('click', ensureAudio, { passive: true });
     window.addEventListener('keydown', ensureAudio, { passive: true });
 
-    // Safety fallback: if video doesn't end within 6.5s, smoothly proceed
+    // Safety fallback: at 2X speed video finishes in ~3.2s, smoothly proceed if not finished in 3.8s
     const timer = setTimeout(() => {
       onFinished();
-    }, 6500);
+    }, 3800);
 
     return () => {
       document.body.style.overflow = originalOverflow;
@@ -70,6 +73,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
   const handlePointerInteraction = () => {
     const video = videoRef.current;
     if (video) {
+      video.playbackRate = 2.0;
       if (video.muted) {
         video.muted = false;
       }
@@ -91,7 +95,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
       className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-black select-none cursor-pointer"
     >
       {/* 
-        Responsive Edge-to-Edge Intro Video:
+        Responsive Edge-to-Edge Intro Video (Plays at 2X speed):
         - Landscape (desktop monitors, laptops, landscape tablets/phones): 'landscape:object-cover' fills the screen edge-to-edge.
         - Mobile Portrait: 'portrait:object-contain' displays the full video width edge-to-edge without cutting off any content on the sides.
         - Clean presentation: No buttons, badges, or overlays.
@@ -102,6 +106,16 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
         playsInline
         autoPlay
         preload="auto"
+        onLoadedMetadata={() => {
+          if (videoRef.current) {
+            videoRef.current.playbackRate = 2.0;
+          }
+        }}
+        onPlay={() => {
+          if (videoRef.current) {
+            videoRef.current.playbackRate = 2.0;
+          }
+        }}
         onEnded={onFinished}
         onError={onFinished}
         className="h-full w-full portrait:object-contain landscape:object-cover object-center"

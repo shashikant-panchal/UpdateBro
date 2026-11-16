@@ -108,9 +108,9 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
             onDragStart={handleDragStart}
             onDrag={handleDrag}
             onDragEnd={handleDragEnd}
-            className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden h-[200px] sm:h-[260px] md:h-[320px] lg:h-[370px] xl:h-[400px] 2xl:h-[430px]"
+            className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden aspect-[2.1/1] sm:aspect-[2.4/1] md:aspect-[2.7/1] lg:aspect-[1920/640]"
           >
-            {/* Pure, Clean Banner Image: Fills card edge-to-edge without extra side bars or blur */}
+            {/* Widescreen Studio Banner: Displays full banner at banner resolution without cropping */}
             <img
               src={slide.image}
               alt={featuredProduct?.name ?? slide.title}
