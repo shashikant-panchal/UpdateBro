@@ -1,6 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpDown, RotateCcw, SlidersHorizontal } from 'lucide-react';
+import {
+  ArrowRight,
+  ArrowUpDown,
+  Bell,
+  CheckCircle2,
+  RotateCcw,
+  SlidersHorizontal,
+  Sparkles,
+} from 'lucide-react';
 import { CATEGORIES, PRODUCTS } from '../data/catalog';
 import type { CategoryId, Product } from '../types';
 import { ProductCard } from './ProductCard';
@@ -27,11 +35,26 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   onQuickView,
 }) => {
   const [sortBy, setSortBy] = useState<SortKey>('featured');
+  const [notified, setNotified] = useState(false);
+  const [email, setEmail] = useState('');
 
-  const tabs: { id: CategoryId; label: string }[] = [
+  const tabs: { id: CategoryId; label: string; isSoon?: boolean }[] = [
     { id: 'all', label: 'All Gear' },
-    ...CATEGORIES.map((c) => ({ id: c.id as CategoryId, label: c.shortLabel })),
+    ...CATEGORIES.map((c) => ({
+      id: c.id as CategoryId,
+      label: c.shortLabel,
+      isSoon: c.count === 0,
+    })),
   ];
+
+  const isComingSoonCategory = useMemo(() => {
+    if (activeCategory === 'all') return false;
+    return PRODUCTS.filter((p) => p.category === activeCategory).length === 0;
+  }, [activeCategory]);
+
+  const activeCategoryMeta = useMemo(() => {
+    return CATEGORIES.find((c) => c.id === activeCategory);
+  }, [activeCategory]);
 
   const filteredProducts = useMemo(() => {
     let list = [...PRODUCTS];
@@ -129,7 +152,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
               key={tab.id}
               type="button"
               onClick={() => onSelectCategory(tab.id)}
-              className={`relative shrink-0 rounded-btn px-4 py-2 text-xs font-bold transition sm:text-sm ${
+              className={`relative inline-flex items-center gap-1.5 shrink-0 rounded-btn px-4 py-2 text-xs font-bold transition sm:text-sm ${
                 isActive ? 'text-accent-ink' : 'text-muted hover:text-ink'
               }`}
             >
@@ -140,7 +163,18 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                   className="absolute inset-0 -z-10 rounded-btn bg-accent shadow-sm"
                 />
               )}
-              {tab.label}
+              <span>{tab.label}</span>
+              {tab.isSoon && (
+                <span
+                  className={`rounded px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider ${
+                    isActive
+                      ? 'bg-black/20 text-accent-ink'
+                      : 'bg-accent/25 text-accent-ink dark:bg-accent/20 dark:text-accent'
+                  }`}
+                >
+                  Soon
+                </span>
+              )}
             </button>
           );
         })}
@@ -180,8 +214,77 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         </div>
       )}
 
-      {/* Product Grid */}
-      {filteredProducts.length === 0 ? (
+      {/* Product Grid or Coming Soon State */}
+      {isComingSoonCategory ? (
+        <div className="mt-8 overflow-hidden rounded-2xl border border-line bg-surface p-6 shadow-soft sm:p-10">
+          <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
+            {activeCategoryMeta && (
+              <div className="group relative mb-5 aspect-[915/1024] w-40 overflow-hidden rounded-2xl border border-line bg-white shadow-soft sm:w-48">
+                <img
+                  src={activeCategoryMeta.image}
+                  alt={activeCategoryMeta.label}
+                  className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
+                />
+                <span className="absolute right-2.5 top-2.5 rounded-full bg-accent px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-accent-ink shadow-sm">
+                  Soon
+                </span>
+              </div>
+            )}
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent-soft px-3 py-1 text-xs font-bold text-ink">
+              <Sparkles className="h-3.5 w-3.5 text-accent-ink" />
+              <span>DROPPING SOON • UPDATE BRO®</span>
+            </div>
+            <h3 className="mt-3 font-display text-2xl font-black text-ink sm:text-3xl">
+              {activeCategoryMeta?.label || 'This Category'} Drops Are Coming Soon!
+            </h3>
+            <p className="mt-2 max-w-lg text-xs text-muted sm:text-sm">
+              We&apos;re currently preparing this collection with high-fidelity acoustic drivers,
+              rugged battery endurance, and instant BIS fast charging. Stay tuned!
+            </p>
+
+            <div className="mt-6 w-full max-w-md">
+              {notified ? (
+                <div className="flex items-center justify-center gap-2 rounded-xl bg-accent-soft/80 p-3 text-xs font-bold text-[#1B8A5A] dark:text-[#8CE0B9]">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>You&apos;ll be the first to know when {activeCategoryMeta?.label} drop!</span>
+                </div>
+              ) : (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setNotified(true);
+                  }}
+                  className="flex flex-col gap-2 sm:flex-row"
+                >
+                  <input
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email for launch alerts"
+                    className="h-10 flex-1 rounded-full border border-line bg-cloud px-4 text-xs text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-accent px-5 text-xs font-bold text-accent-ink shadow-sm transition hover:bg-accent-hover"
+                  >
+                    <Bell className="h-3.5 w-3.5" />
+                    <span>Notify Me</span>
+                  </button>
+                </form>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={resetAllFilters}
+              className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-5 py-2.5 text-xs font-bold text-ink transition hover:border-accent hover:bg-accent-soft sm:text-sm"
+            >
+              <span>Show All Available Gear ({PRODUCTS.length} Products)</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      ) : filteredProducts.length === 0 ? (
         <div className="mt-8 flex flex-col items-center justify-center rounded-card border border-dashed border-line bg-surface px-6 py-16 text-center">
           <p className="font-display text-lg font-bold text-ink">No matching UPDATE BRO® gear found</p>
           <p className="mt-1 text-sm text-muted">

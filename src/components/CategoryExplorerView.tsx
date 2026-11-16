@@ -1,6 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ArrowUpDown, Minus, Plus, Search, Star, X } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpDown,
+  Bell,
+  CheckCircle2,
+  Clock,
+  Minus,
+  Plus,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  X,
+  Zap,
+} from 'lucide-react';
 import { CATEGORIES, PRODUCTS } from '../data/catalog';
 import { useCart } from '../context/CartContext';
 import { useMotionConfig } from '../hooks/useMotionConfig';
@@ -38,6 +53,8 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
 
   const [sortBy, setSortBy] = useState<SortKey>('featured');
   const [selectedColors, setSelectedColors] = useState<Record<string, number>>({});
+  const [notifiedCategories, setNotifiedCategories] = useState<Record<string, boolean>>({});
+  const [contactInput, setContactInput] = useState('');
   const contentTopRef = useRef<HTMLDivElement>(null);
 
   const railCategories: RailCategoryItem[] = useMemo(
@@ -47,7 +64,7 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
         label: 'All Gear',
         shortLabel: 'All Gear',
         tagline: 'Every UPDATE BRO® Drop',
-        image: '/assets/products/ub-tws-anc-01.jpg',
+        image: '/assets/categories/true-wireless-earbuds.jpg',
       },
       ...CATEGORIES.map((c) => ({
         id: c.id as CategoryId,
@@ -64,6 +81,21 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
     () => railCategories.find((c) => c.id === activeCategory) ?? railCategories[0],
     [activeCategory, railCategories]
   );
+
+  const isCategoryEmpty = useMemo(() => {
+    if (activeCategory === 'all') return false;
+    return PRODUCTS.filter((p) => p.category === activeCategory).length === 0;
+  }, [activeCategory]);
+
+  const isNotified = Boolean(notifiedCategories[activeCategory]);
+
+  const handleNotifySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (contactInput.trim() || !contactInput) {
+      setNotifiedCategories((prev) => ({ ...prev, [activeCategory]: true }));
+      setContactInput('');
+    }
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -196,6 +228,10 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
           <div className="flex flex-col gap-1 px-1 sm:px-2">
             {railCategories.map((cat) => {
               const isActive = activeCategory === cat.id;
+              const isSoon =
+                cat.id !== 'all' &&
+                PRODUCTS.filter((p) => p.category === cat.id).length === 0;
+
               return (
                 <button
                   key={cat.id}
@@ -223,16 +259,16 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
                     />
                   )}
 
-                  {/* Real-Photo Category Thumbnail */}
+                  {/* Category Thumbnail */}
                   <div
-                    className={`relative z-10 h-12 w-12 shrink-0 overflow-hidden rounded-xl border transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14 ${
-                      isActive ? 'border-accent shadow-sm' : 'border-line bg-cloud'
+                    className={`relative z-10 h-12 w-12 shrink-0 overflow-hidden rounded-xl border transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14 bg-white ${
+                      isActive ? 'border-accent shadow-sm' : 'border-line'
                     }`}
                   >
                     <img
                       src={cat.image}
                       alt={cat.label}
-                      className="h-full w-full object-cover object-center"
+                      className="h-full w-full object-contain p-0.5"
                     />
                   </div>
 
@@ -246,6 +282,11 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
                       <span className="md:hidden">{cat.shortLabel}</span>
                       <span className="hidden md:inline">{cat.label}</span>
                     </p>
+                    {isSoon && (
+                      <span className="mt-0.5 inline-block rounded bg-accent/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-accent-ink">
+                        Soon
+                      </span>
+                    )}
                   </div>
                 </button>
               );
@@ -279,7 +320,153 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
               exit={isReduced ? {} : { opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              {filteredProducts.length === 0 ? (
+              {isCategoryEmpty ? (
+                <div className="overflow-hidden rounded-2xl border border-line bg-surface p-5 shadow-soft sm:p-8 lg:p-10">
+                  <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-12">
+                    {/* Left: Category Card Banner Preview */}
+                    <div className="flex justify-center md:col-span-5">
+                      <div className="group relative aspect-[915/1024] w-full max-w-[280px] overflow-hidden rounded-2xl border border-line bg-white shadow-soft transition-all duration-300 hover:border-accent hover:shadow-glow sm:max-w-[320px]">
+                        <img
+                          src={currentMeta.image}
+                          alt={currentMeta.label}
+                          className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-accent-ink shadow-sm">
+                          <Clock className="h-3 w-3" />
+                          Coming Soon
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Right: Info & VIP Launch Waitlist */}
+                    <div className="space-y-5 text-center md:col-span-7 md:text-left">
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent-soft px-3 py-1 text-xs font-bold text-ink">
+                          <Sparkles className="h-3.5 w-3.5 text-accent-ink" />
+                          <span>UPDATE BRO® LABS • UPCOMING DROP</span>
+                        </div>
+                        <h2 className="mt-3 font-display text-2xl font-black tracking-tight text-ink sm:text-3xl lg:text-4xl">
+                          {currentMeta.label}{' '}
+                          <span className="underline decoration-accent decoration-4 underline-offset-4">
+                            Coming Soon
+                          </span>
+                        </h2>
+                        <p className="mt-2.5 text-xs text-muted sm:text-sm sm:leading-relaxed">
+                          We&apos;re currently engineering our all-new signature {currentMeta.label.toLowerCase()} lineup
+                          with studio-grade audio tuning, heavy bass, aerospace durability, and rapid charging.
+                          This collection will be dropping soon!
+                        </p>
+                      </div>
+
+                      {/* Teaser Feature Cards */}
+                      <div className="grid grid-cols-1 gap-2.5 text-left sm:grid-cols-3 sm:gap-3">
+                        <div className="rounded-xl border border-line bg-cloud/60 p-3">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-ink">
+                            <Zap className="h-3.5 w-3.5 text-accent" />
+                            <span>Pro Hardware</span>
+                          </div>
+                          <p className="mt-1 text-[11px] text-muted">
+                            Low-latency architecture &amp; signature UB acoustic curve.
+                          </p>
+                        </div>
+                        <div className="rounded-xl border border-line bg-cloud/60 p-3">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-ink">
+                            <ShieldCheck className="h-3.5 w-3.5 text-[#1B8A5A] dark:text-[#8CE0B9]" />
+                            <span>1-Yr Warranty</span>
+                          </div>
+                          <p className="mt-1 text-[11px] text-muted">
+                            Doorstep replacement with zero questions asked.
+                          </p>
+                        </div>
+                        <div className="rounded-xl border border-line bg-cloud/60 p-3">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-ink">
+                            <Bell className="h-3.5 w-3.5 text-accent" />
+                            <span>VIP Priority</span>
+                          </div>
+                          <p className="mt-1 text-[11px] text-muted">
+                            First-batch dispatch &amp; launch day early-bird coupon.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Interactive Notify Me Form */}
+                      <div className="rounded-xl border border-line bg-cloud/40 p-4">
+                        {isNotified ? (
+                          <div className="flex items-center gap-2.5 text-left text-xs font-bold text-[#1B8A5A] dark:text-[#8CE0B9]">
+                            <CheckCircle2 className="h-5 w-5 shrink-0" />
+                            <div>
+                              <p className="text-sm font-extrabold text-ink">
+                                You&apos;re on the VIP Launch List!
+                              </p>
+                              <p className="mt-0.5 text-xs font-normal text-muted">
+                                We will alert you the moment {currentMeta.label} officially go live.
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <form onSubmit={handleNotifySubmit} className="space-y-2">
+                            <label className="block text-left text-xs font-bold text-ink">
+                              Get notified when {currentMeta.label} launch:
+                            </label>
+                            <div className="flex flex-col gap-2 sm:flex-row">
+                              <input
+                                type="text"
+                                value={contactInput}
+                                onChange={(e) => setContactInput(e.target.value)}
+                                placeholder="Enter your email or WhatsApp number"
+                                className="h-10 flex-1 rounded-full border border-line bg-surface px-4 text-xs text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+                              />
+                              <button
+                                type="submit"
+                                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-accent px-5 text-xs font-bold text-accent-ink shadow-sm transition hover:bg-accent-hover"
+                              >
+                                <Bell className="h-3.5 w-3.5" />
+                                <span>Notify Me</span>
+                              </button>
+                            </div>
+                            <p className="text-left text-[11px] text-muted">
+                              🔒 Zero spam. We only notify you when this category drops.
+                            </p>
+                          </form>
+                        )}
+                      </div>
+
+                      {/* Quick Navigation Actions */}
+                      <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1 md:justify-start">
+                        <button
+                          type="button"
+                          onClick={() => handleRailSwitch('all')}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink transition hover:border-accent hover:bg-accent-soft"
+                        >
+                          <span>Explore All Available Gear</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRailSwitch('tws-earbuds')}
+                          className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-accent hover:text-ink"
+                        >
+                          Shop Earbuds
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRailSwitch('smartwatches')}
+                          className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-accent hover:text-ink"
+                        >
+                          Shop Smart Watches
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRailSwitch('chargers')}
+                          className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-muted transition hover:border-accent hover:text-ink"
+                        >
+                          Shop Chargers
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : filteredProducts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-card border border-line bg-surface px-4 py-14 text-center">
                   <p className="font-display text-base font-bold text-ink sm:text-lg">
                     No matching products in {currentMeta.label}

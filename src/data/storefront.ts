@@ -30,7 +30,7 @@ export const HERO_SLIDES: HeroSlide[] = [
       'Power your laptop, MagSafe phone, and earbuds at once. Cool-matrix 65W GaN adapters, 15W MagSnap banks, and 100W ballistic braided cables.',
     ctaLabel: 'Explore GaN Power',
     secondaryCtaLabel: 'View 65W GaN',
-    targetCategory: 'fast-chargers',
+    targetCategory: 'chargers',
     featuredProductId: 'ub-gan-65w-01',
     image: '/assets/hero-charge.jpg',
     gradientLight: 'from-[#FAF9FC] via-[#F2F0FC] to-[#E9E6FD]',

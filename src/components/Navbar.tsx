@@ -164,16 +164,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                               : 'border-transparent bg-cloud/50'
                           }`}
                         >
-                          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-surface">
-                            <ProductArt
-                              model={cat.sampleModel}
-                              color={cat.sampleColor}
-                              image={cat.image}
+                          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-line bg-white p-0.5">
+                            <img
+                              src={cat.image}
                               alt={cat.label}
+                              className="h-full w-full object-contain"
                             />
                           </div>
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-bold text-ink">{cat.label}</p>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5">
+                              <p className="truncate text-sm font-bold text-ink">{cat.label}</p>
+                              {cat.count === 0 && (
+                                <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-accent-ink">
+                                  Soon
+                                </span>
+                              )}
+                            </div>
                             <p className="truncate text-xs text-muted">{cat.tagline}</p>
                           </div>
                         </button>
@@ -518,6 +524,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                       }`}
                     >
                       <span>{cat.label}</span>
+                      {cat.count === 0 && (
+                        <span className="rounded bg-accent/20 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-accent-ink">
+                          Soon
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>

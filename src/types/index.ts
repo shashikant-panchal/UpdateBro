@@ -4,13 +4,19 @@ export type ResolvedTheme = 'light' | 'dark';
 export type CategoryId =
   | 'all'
   | 'tws-earbuds'
-  | 'neckbands-headphones'
+  | 'neckbands'
+  | 'wireless-headphones'
   | 'smartwatches'
-  | 'fast-chargers'
-  | 'braided-cables'
+  | 'wireless-speakers'
+  | 'soundbars'
+  | 'chargers'
+  | 'cables'
   | 'power-banks'
   | 'car-accessories'
-  | 'cases-stands';
+  | 'cases-stands'
+  | 'fast-chargers'
+  | 'braided-cables'
+  | 'neckbands-headphones';
 
 export type HardwareModel =
   | 'tws-anc-pods'

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import { CATEGORIES } from '../data/catalog';
+import { CATEGORIES, PRODUCTS } from '../data/catalog';
 import { useMotionConfig } from '../hooks/useMotionConfig';
 import type { CategoryId } from '../types';
 
@@ -61,19 +61,22 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
             onClick={() => onSelectCategory('all')}
             className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 text-xs font-bold text-ink transition hover:border-accent hover:bg-accent-soft sm:text-sm"
           >
-            <span>Explore Categories</span>
+            <span>Explore All Categories</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
-      {/* boAt-Inspired Horizontal Squircle Strip across 8 Hardware Categories */}
+      {/* boAt-Inspired Horizontal Strip across 9 Hardware Categories */}
       <div
         ref={railRef}
         className="no-scrollbar -mx-4 flex gap-3.5 overflow-x-auto px-4 pb-2 sm:-mx-0 sm:gap-4 sm:px-0"
       >
         {CATEGORIES.map((cat, idx) => {
           const isActive = activeCategory === cat.id;
+          const productCount = PRODUCTS.filter((p) => p.category === cat.id).length;
+          const isComingSoon = productCount === 0;
+
           return (
             <motion.button
               key={cat.id}
@@ -85,25 +88,31 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
               transition={{ duration: 0.3, delay: idx * 0.025 }}
               whileHover={isReduced ? {} : { y: -4 }}
               whileTap={isReduced ? {} : { scale: 0.97 }}
-              className="group flex w-[124px] shrink-0 flex-col items-center text-center sm:w-[138px] lg:w-[146px]"
+              className="group flex w-[130px] shrink-0 flex-col items-center text-center sm:w-[145px] lg:w-[155px]"
             >
-              {/* Full-Visibility Real Studio Photography Squircle */}
+              {/* Full-Visibility Category Card Banner */}
               <div
-                className={`relative aspect-square w-full overflow-hidden rounded-card border transition-all duration-300 ${
+                className={`relative aspect-[915/1024] w-full overflow-hidden rounded-2xl border transition-all duration-300 bg-white ${
                   isActive
                     ? 'border-accent ring-2 ring-accent/70 shadow-glow'
-                    : 'border-line bg-surface shadow-soft group-hover:border-accent group-hover:shadow-glow'
+                    : 'border-line shadow-soft group-hover:border-accent group-hover:shadow-glow'
                 }`}
               >
                 <img
                   src={cat.image}
                   alt={cat.label}
                   loading="lazy"
-                  className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.06]"
+                  className="h-full w-full object-contain p-1 transition-transform duration-500 group-hover:scale-[1.03]"
                 />
+
+                {isComingSoon && (
+                  <span className="absolute right-2 top-2 rounded-full bg-accent px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-accent-ink shadow-sm">
+                    Soon
+                  </span>
+                )}
               </div>
 
-              <span className="mt-2.5 line-clamp-2 text-xs font-bold leading-snug text-ink sm:text-[13px]">
+              <span className="sr-only">
                 {cat.label}
               </span>
             </motion.button>
