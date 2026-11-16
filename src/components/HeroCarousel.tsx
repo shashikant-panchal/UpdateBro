@@ -78,7 +78,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
   return (
     <section
       id="top"
-      className="mx-auto max-w-[1920px] px-4 pt-4 sm:px-6 sm:pt-6 md:px-8 lg:px-12 2xl:px-16 3xl:px-20"
+      className="mx-auto max-w-[1920px] px-4 pt-3 sm:px-6 sm:pt-4 md:px-8 lg:px-12 2xl:px-16 3xl:px-20"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -108,11 +108,11 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
             onDragStart={handleDragStart}
             onDrag={handleDrag}
             onDragEnd={handleDragEnd}
-            className="group relative flex aspect-[16/9] w-full cursor-pointer items-center justify-center overflow-hidden max-h-[calc(100vh-140px)] sm:max-h-[calc(100vh-160px)]"
+            className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden h-[200px] sm:h-[260px] md:h-[310px] lg:h-[360px] xl:h-[390px] 2xl:h-[410px]"
           >
-            {/* Ambient Matching Glow for wide/ultrawide desktop screens to blend seamlessly without voids */}
+            {/* Ambient Matching Glow for wide desktop screens so it blends seamlessly */}
             <div
-              className="pointer-events-none absolute inset-0 overflow-hidden opacity-35 blur-2xl select-none"
+              className="pointer-events-none absolute inset-0 overflow-hidden opacity-30 blur-2xl select-none"
               aria-hidden="true"
             >
               <img
@@ -122,7 +122,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
               />
             </div>
 
-            {/* Main Sharp Complete Banner Image: 100% visible, zero cropping on mobile, laptop, and desktop */}
+            {/* Main Sharp Complete Banner Image: 100% visible, zero cropping on all devices */}
             <img
               src={slide.image}
               alt={featuredProduct?.name ?? slide.title}
