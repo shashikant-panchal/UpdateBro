@@ -82,7 +82,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative overflow-hidden rounded-card border border-line bg-black shadow-soft">
+      <div className="relative overflow-hidden rounded-card border border-line bg-[#0B0D11] shadow-soft">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={slide.id}
@@ -108,13 +108,25 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
             onDragStart={handleDragStart}
             onDrag={handleDrag}
             onDragEnd={handleDragEnd}
-            className="group relative flex aspect-[16/9] w-full cursor-pointer items-center justify-center overflow-hidden max-h-[620px] 2xl:max-h-[720px]"
+            className="group relative flex aspect-[16/9] w-full cursor-pointer items-center justify-center overflow-hidden max-h-[calc(100vh-140px)] sm:max-h-[calc(100vh-160px)]"
           >
-            {/* Banner Image (Clean graphics with no HTML text overlays) */}
+            {/* Ambient Matching Glow for wide/ultrawide desktop screens to blend seamlessly without voids */}
+            <div
+              className="pointer-events-none absolute inset-0 overflow-hidden opacity-35 blur-2xl select-none"
+              aria-hidden="true"
+            >
+              <img
+                src={slide.image}
+                alt=""
+                className="h-full w-full object-cover object-center scale-110"
+              />
+            </div>
+
+            {/* Main Sharp Complete Banner Image: 100% visible, zero cropping on mobile, laptop, and desktop */}
             <img
               src={slide.image}
               alt={featuredProduct?.name ?? slide.title}
-              className="pointer-events-none h-full w-full object-cover object-center select-none"
+              className="relative z-10 pointer-events-none h-full w-full object-contain object-center select-none"
             />
           </motion.div>
         </AnimatePresence>
@@ -128,7 +140,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
               paginate(-1);
             }}
             aria-label="Previous banner"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white shadow-sm backdrop-blur-md transition hover:bg-black/80 sm:h-9 sm:w-9"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white shadow-sm backdrop-blur-md transition hover:bg-black/90 sm:h-9 sm:w-9"
           >
             <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </button>
@@ -139,7 +151,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onInspectProduct }) 
               paginate(1);
             }}
             aria-label="Next banner"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white shadow-sm backdrop-blur-md transition hover:bg-black/80 sm:h-9 sm:w-9"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white shadow-sm backdrop-blur-md transition hover:bg-black/90 sm:h-9 sm:w-9"
           >
             <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </button>
