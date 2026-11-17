@@ -175,10 +175,10 @@ export const POWER_COMBOS: BundleCombo[] = [
 ];
 
 export const MARQUEE_MESSAGES = [
-  '⚡ UPDATE BRO® — Power Your World • Powered by NEXGENTEQ',
+  '⚡ UPDATE BRO® — Power Your World',
   '🛡️ 1-Year Instant Replacement Warranty across 700+ Centers',
   '🎁 Use Code UPDATE10 for Flat 10% OFF at Checkout',
-  '🏭 Manufactured in Hyderabad, Telangana, India • www.updatebro.in',
-  '⚡ NEXGENTEQ – Manufacturing Technology • UPDATE BRO – Powering Connections',
+  '📍 Hyderabad, Telangana, India • www.updatebro.in',
+  '⚡ UPDATE BRO® – Powering Connections • Power Your World',
   '🚀 Same-Day Dispatch on Orders before 4 PM IST',
 ];

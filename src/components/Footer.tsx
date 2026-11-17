@@ -88,7 +88,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
               Power Your World.
             </p>
             <p className="mt-2 text-xs leading-relaxed text-muted sm:text-sm">
-              UPDATE BRO is a next-generation mobile accessories brand, manufactured and powered by <strong className="text-ink font-bold">NEXGENTEQ</strong>.
+              UPDATE BRO is a next-generation mobile accessories brand dedicated to delivering quality, performance, reliability and modern technology.
             </p>
             <p className="mt-1 text-xs text-muted">
               We specialize in innovative fast chargers, data cables, power banks, car chargers, TWS earbuds and connectivity solutions.
@@ -101,8 +101,8 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
                 <span className="font-bold text-ink">UPDATE BRO®</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted">Manufacturer:</span>
-                <span className="font-bold text-accent">NEXGENTEQ</span>
+                <span className="text-muted">Motto:</span>
+                <span className="font-bold text-accent">Power Your World.</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted">Location:</span>
@@ -112,8 +112,8 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
 
             {/* Slogan Lockup */}
             <div className="mt-3 rounded-lg border border-line bg-surface px-3 py-2 text-[11px] font-semibold text-muted">
-              <p><span className="font-bold text-ink">NEXGENTEQ</span> – Manufacturing Technology.</p>
-              <p className="mt-0.5"><span className="font-bold text-accent">UPDATE BRO</span> – Powering Connections.</p>
+              <p><span className="font-bold text-accent">UPDATE BRO</span> – Powering Connections.</p>
+              <p className="mt-0.5"><span className="font-bold text-ink">UPDATE BRO®</span> – Power Your World.</p>
             </div>
 
             <div className="mt-4 flex items-center gap-2.5">
@@ -205,7 +205,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
                   onClick={() => onOpenInfo('about')}
                   className="text-left font-bold text-accent transition hover:underline"
                 >
-                  About UPDATE BRO® (NEXGENTEQ)
+                  About UPDATE BRO®
                 </button>
               </li>
               <li>
@@ -252,10 +252,10 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
         <div className="flex flex-col items-center justify-between gap-4 border-t border-line pt-6 sm:flex-row">
           <div className="flex flex-col items-center gap-1 sm:items-start text-xs text-muted">
             <p>
-              © {new Date().getFullYear()} UPDATE BRO® • Manufactured by <strong className="text-ink">NEXGENTEQ</strong> • Hyderabad, Telangana, India.
+              © {new Date().getFullYear()} UPDATE BRO® • Power Your World. Hyderabad, Telangana, India.
             </p>
             <p className="text-[11px] text-muted/80">
-              NEXGENTEQ – Manufacturing Technology. • UPDATE BRO – Powering Connections.
+              UPDATE BRO – Powering Connections. All rights reserved.
             </p>
           </div>
 

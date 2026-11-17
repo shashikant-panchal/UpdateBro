@@ -190,8 +190,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                     <div className="mt-3 flex items-center justify-between border-t border-line pt-2.5 text-[10px] text-muted">
                       <span>
-                        <strong className="text-ink">UPDATE BRO®</strong> • Manufactured by{' '}
-                        <strong className="text-accent">NEXGENTEQ</strong> (Hyderabad)
+                        <strong className="text-ink">UPDATE BRO®</strong> •{' '}
+                        <strong className="text-accent">Power Your World.</strong> (Hyderabad)
                       </span>
                       <a
                         href="https://www.updatebro.in"
@@ -309,8 +309,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                     <div className="mt-3 flex items-center justify-between border-t border-line pt-2.5 text-[10px] text-muted">
                       <span>
-                        <strong className="text-ink">UPDATE BRO®</strong> • Manufactured by{' '}
-                        <strong className="text-accent">NEXGENTEQ</strong> (Hyderabad)
+                        <strong className="text-ink">UPDATE BRO®</strong> •{' '}
+                        <strong className="text-accent">Power Your World.</strong> (Hyderabad)
                       </span>
                       <a
                         href="https://www.updatebro.in"
@@ -481,14 +481,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span className="text-[10px] font-black uppercase text-accent">Power Your World.</span>
                   </div>
                   <p className="mt-1 text-[11px] text-muted">
-                    Manufactured &amp; powered by <strong className="text-ink">NEXGENTEQ</strong>
+                    Next-generation mobile &amp; audio accessories
                   </p>
                   <div className="mt-2 text-[10px] text-muted space-y-0.5 border-t border-line/60 pt-2">
-                    <p>{' '}Hyderabad, Telangana, India</p>
+                    <p>Hyderabad, Telangana, India</p>
                   </div>
                   <div className="mt-2 text-[9px] text-muted/80">
-                    <p>NEXGENTEQ – Manufacturing Technology.</p>
                     <p>UPDATE BRO – Powering Connections.</p>
+                    <p className="font-semibold text-accent">Power Your World – Every Device, Everywhere.</p>
                   </div>
                 </div>
               </div>

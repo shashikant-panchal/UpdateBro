@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, MotionConfig } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { CartProvider } from './context/CartContext';
@@ -22,6 +22,7 @@ import { InfoModal, type InfoModalTopic } from './components/InfoModal';
 import { IntroVideo } from './components/IntroVideo';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { PersonalizationModal } from './components/PersonalizationModal';
+import { UnderDevelopmentPopup } from './components/UnderDevelopmentPopup';
 
 const StorefrontShell: React.FC = () => {
   const { isReduced } = useMotionConfig();
@@ -35,6 +36,13 @@ const StorefrontShell: React.FC = () => {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [infoTopic, setInfoTopic] = useState<InfoModalTopic>(null);
   const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false);
+  const [showDevPopup, setShowDevPopup] = useState(false);
+
+  useEffect(() => {
+    if (!showIntro) {
+      setShowDevPopup(true);
+    }
+  }, [showIntro]);
 
   const handleOpenCategory = (cat: CategoryId) => {
     setActiveCategory(cat);
@@ -140,6 +148,13 @@ const StorefrontShell: React.FC = () => {
         <PersonalizationModal
           isOpen={isPersonalizationOpen}
           onClose={() => setIsPersonalizationOpen(false)}
+        />
+
+        {/* 2-Second Animated Launching Soon Popup */}
+        <UnderDevelopmentPopup
+          isOpen={!showIntro && showDevPopup}
+          onClose={() => setShowDevPopup(false)}
+          durationMs={2000}
         />
       </div>
     </MotionConfig>

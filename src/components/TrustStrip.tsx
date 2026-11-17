@@ -86,7 +86,7 @@ export const TrustStrip: React.FC = () => {
               <span className="text-xs font-extrabold text-accent">Power Your World.</span>
               <span className="text-xs text-muted">•</span>
               <span className="text-xs font-semibold text-muted">
-                Manufactured &amp; Powered by <strong className="text-ink">NEXGENTEQ</strong>
+                Premium Next-Gen Mobile &amp; Audio Accessories
               </span>
             </div>
             <p className="mt-1 text-xs text-muted">

@@ -22,13 +22,13 @@ const TOPIC_COPY: Record<
 > = {
   about: {
     title: 'UPDATE BRO® — Power Your World',
-    subtitle: 'Next-generation mobile accessories manufactured & powered by NEXGENTEQ.',
+    subtitle: 'Next-generation mobile accessories designed for performance, durability, and style.',
     points: [
-      'UPDATE BRO is a next-generation mobile accessories brand, manufactured and powered by NEXGENTEQ.',
+      'UPDATE BRO is a next-generation mobile accessories brand — Power Your World.',
       'We specialize in innovative mobile accessories, including fast chargers, data cables, power banks, car chargers, TWS earbuds and connectivity solutions.',
       'Our mission is to deliver quality, performance, reliability and modern technology at affordable prices.',
-      'NEXGENTEQ – Manufacturing Technology.',
       'UPDATE BRO – Powering Connections.',
+      'Power Your World – Every Device, Everywhere.',
     ],
   },
   warranty: {
@@ -146,8 +146,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({ topic, onClose }) => {
                     <p className="font-bold text-ink">UPDATE BRO®</p>
                   </div>
                   <div>
-                    <span className="text-[11px] font-semibold text-muted">Manufacturer</span>
-                    <p className="font-bold text-accent">NEXGENTEQ</p>
+                    <span className="text-[11px] font-semibold text-muted">Tagline</span>
+                    <p className="font-bold text-accent">Power Your World.</p>
                   </div>
                   <div>
                     <span className="text-[11px] font-semibold text-muted">Location</span>
@@ -159,8 +159,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({ topic, onClose }) => {
                   </div>
                 </div>
                 <div className="mt-3 border-t border-line/60 pt-2 text-[11px] text-muted">
-                  <p><span className="font-bold text-ink">NEXGENTEQ</span> – Manufacturing Technology.</p>
-                  <p><span className="font-bold text-accent">UPDATE BRO</span> – Powering Connections.</p>
+                  <p><span className="font-bold text-ink">UPDATE BRO</span> – Powering Connections.</p>
+                  <p><span className="font-bold text-accent">Power Your World.</span> – Next-Gen Accessories.</p>
                 </div>
               </div>
             )}

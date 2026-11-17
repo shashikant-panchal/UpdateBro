@@ -13,7 +13,7 @@ interface BrandLogoProps {
 
 /**
  * UpdateBro (UB) Official Brand Logo
- * Geometric Monogram, Dynamic Extended Wordmark, and "Powered by NEXGENTEQ" lockup.
+ * Geometric Monogram, Dynamic Extended Wordmark, and "Power Your World" tagline.
  * Adaptive via `currentColor` and branded cyber-orange accents (#FF6A00).
  */
 export const BrandLogo: React.FC<BrandLogoProps> = ({
@@ -21,7 +21,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   className = '',
   color,
   showSubtitle = true,
-  ariaLabel = 'UPDATE BRO® — Powered by NEXGENTEQ',
+  ariaLabel = 'UPDATE BRO® — Power Your World',
 }) => {
   if (variant === 'official') {
     return (
@@ -115,15 +115,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           <path d={LOGO_PATHS.wordmark.d} />
         </svg>
 
-        {/* Powered by NEXGENTEQ */}
+        {/* Power Your World */}
         {showSubtitle && (
           <div className="mt-3 flex items-center gap-2">
             <span className="h-[1px] w-6 bg-gradient-to-r from-transparent to-accent/80 sm:w-8" />
-            <span className="text-[9px] font-black uppercase tracking-[0.22em] text-muted sm:text-[10px]">
-              Powered By{' '}
-              <span className="font-extrabold text-ink">
-                NE<span className="text-accent drop-shadow-[0_0_8px_rgba(255,106,0,0.6)]">X</span>GENTEQ
-              </span>
+            <span className="text-[9px] font-black uppercase tracking-[0.24em] text-accent sm:text-[10px]">
+              Power Your World
             </span>
             <span className="h-[1px] w-6 bg-gradient-to-l from-transparent to-accent/80 sm:w-8" />
           </div>
@@ -166,8 +163,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         {showSubtitle && (
           <div className="mt-0.5 flex items-center gap-1">
             <span className="h-[1px] w-3 bg-accent/60" />
-            <span className="text-[7.5px] font-black uppercase tracking-[0.18em] text-muted sm:text-[8px]">
-              By NE<span className="text-accent font-black">X</span>GENTEQ
+            <span className="text-[7.5px] font-black uppercase tracking-[0.18em] text-accent sm:text-[8px]">
+              Power Your World
             </span>
           </div>
         )}
