@@ -11,13 +11,13 @@ interface UnderDevelopmentPopupProps {
 
 /**
  * Animated "Under Development • Launching Soon" popup
- * Automatically displays for 2 seconds when the website renders and transitions smoothly out.
+ * Automatically displays for 4 seconds when the website renders and transitions smoothly out.
  * Matches the dual-theme aesthetic (Obsidian Dark / Ceramic Light) with cyber-orange accents.
  */
 export const UnderDevelopmentPopup: React.FC<UnderDevelopmentPopupProps> = ({
   isOpen,
   onClose,
-  durationMs = 2000,
+  durationMs = 4000,
 }) => {
   useEffect(() => {
     if (!isOpen) return;
@@ -102,7 +102,7 @@ export const UnderDevelopmentPopup: React.FC<UnderDevelopmentPopupProps> = ({
               </div>
             </div>
 
-            {/* 2-Second Countdown Progress Bar */}
+            {/* 4-Second Countdown Progress Bar */}
             <div className="absolute inset-x-0 bottom-0 h-1.5 bg-line/60">
               <motion.div
                 initial={{ width: '0%' }}

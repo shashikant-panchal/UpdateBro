@@ -150,11 +150,11 @@ const StorefrontShell: React.FC = () => {
           onClose={() => setIsPersonalizationOpen(false)}
         />
 
-        {/* 2-Second Animated Launching Soon Popup */}
+        {/* 4-Second Animated Launching Soon Popup */}
         <UnderDevelopmentPopup
           isOpen={!showIntro && showDevPopup}
           onClose={() => setShowDevPopup(false)}
-          durationMs={2000}
+          durationMs={4000}
         />
       </div>
     </MotionConfig>
