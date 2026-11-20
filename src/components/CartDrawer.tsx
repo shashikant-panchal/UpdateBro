@@ -712,9 +712,29 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                       </span>
                     </button>
 
-                    <div className="pt-2 text-center">
+                    <div className="pt-2 text-center space-y-1">
                       <p className="text-[11px] text-muted">
                         🔒 256-bit Encrypted • Free Express Delivery on ₹499+
+                      </p>
+                      <p className="text-[10px] text-muted leading-relaxed">
+                        By continuing, you agree to our{' '}
+                        <a
+                          href="/terms-of-service"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-bold text-accent underline hover:text-accent-hover"
+                        >
+                          Terms
+                        </a>{' '}
+                        &amp;{' '}
+                        <a
+                          href="/privacy-policy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-bold text-accent underline hover:text-accent-hover"
+                        >
+                          Privacy Policy
+                        </a>.
                       </p>
                     </div>
                   </div>

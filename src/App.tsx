@@ -27,10 +27,12 @@ import { UnderDevelopmentPopup } from './components/UnderDevelopmentPopup';
 import { AuthModal } from './components/AuthModal';
 import { CustomerOrdersView } from './components/CustomerOrdersView';
 import { NewArrivalsWidget } from './components/NewArrivalsWidget';
+import { PrivacyPolicyView } from './components/PrivacyPolicyView';
+import { TermsOfServiceView } from './components/TermsOfServiceView';
 import { StorefrontProvider, useStorefront } from './context/StorefrontContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
-export type AppView = 'home' | 'category' | 'orders';
+export type AppView = 'home' | 'category' | 'orders' | 'privacy' | 'terms';
 
 const StorefrontShell: React.FC = () => {
   const { isReduced } = useMotionConfig();
@@ -39,17 +41,26 @@ const StorefrontShell: React.FC = () => {
   // Dynamic Storefront Sync
   const { storeSettings } = useStorefront();
 
-  // Route State derived from URL
+  // Route State derived from URL (Supports /privacy-policy, /terms-of-service, /orders, /category)
   const [activeView, setActiveView] = useState<AppView>(() => {
-    const path = window.location.pathname;
+    const path = window.location.pathname.toLowerCase();
+    if (path.startsWith('/privacy')) return 'privacy';
+    if (path.startsWith('/terms')) return 'terms';
     if (path.startsWith('/orders')) return 'orders';
-    if (path.startsWith('/category')) return 'category';
+    if (path.startsWith('/category') || path.startsWith('/categories')) return 'category';
     return 'home';
   });
 
   const [showIntro, setShowIntro] = useState(() => {
-    // Only show video on initial home landing, skip if directly navigating to /orders
-    if (window.location.pathname.startsWith('/orders')) return false;
+    const path = window.location.pathname.toLowerCase();
+    // Only show video on initial home landing, skip if directly navigating to subpages or legal docs
+    if (
+      path.startsWith('/orders') ||
+      path.startsWith('/privacy') ||
+      path.startsWith('/terms')
+    ) {
+      return false;
+    }
     try {
       if (sessionStorage.getItem('ub_intro_played') === 'true') {
         return false;
@@ -71,10 +82,14 @@ const StorefrontShell: React.FC = () => {
   // Synchronize browser history and popstate navigation
   useEffect(() => {
     const handlePopState = () => {
-      const p = window.location.pathname;
-      if (p.startsWith('/orders')) {
+      const p = window.location.pathname.toLowerCase();
+      if (p.startsWith('/privacy')) {
+        setActiveView('privacy');
+      } else if (p.startsWith('/terms')) {
+        setActiveView('terms');
+      } else if (p.startsWith('/orders')) {
         setActiveView('orders');
-      } else if (p.startsWith('/category')) {
+      } else if (p.startsWith('/category') || p.startsWith('/categories')) {
         setActiveView('category');
       } else {
         setActiveView('home');
@@ -95,6 +110,8 @@ const StorefrontShell: React.FC = () => {
     setActiveView(view);
     let targetPath = '/';
     if (view === 'orders') targetPath = '/orders';
+    else if (view === 'privacy') targetPath = '/privacy-policy';
+    else if (view === 'terms') targetPath = '/terms-of-service';
     else if (view === 'category') {
       targetPath = cat && cat !== 'all' ? `/category/${cat}` : '/categories';
       if (cat) setActiveCategory(cat);
@@ -133,8 +150,18 @@ const StorefrontShell: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* VIEW 1: Customer Live Order Tracker */}
-      {activeView === 'orders' ? (
+      {/* VIEW 1: Dedicated Legal Views (Required for Google OAuth Verification) */}
+      {activeView === 'privacy' ? (
+        <PrivacyPolicyView
+          onBack={handleBackHome}
+          onOpenTerms={() => navigateTo('terms')}
+        />
+      ) : activeView === 'terms' ? (
+        <TermsOfServiceView
+          onBack={handleBackHome}
+          onOpenPrivacy={() => navigateTo('privacy')}
+        />
+      ) : activeView === 'orders' ? (
         <div className="min-h-screen bg-canvas text-ink transition-colors duration-200">
           <TopMarquee announcementText={storeSettings?.announcement_text} />
           <Navbar
@@ -153,10 +180,12 @@ const StorefrontShell: React.FC = () => {
             onSelectCategory={handleOpenCategory}
             onOpenInfo={setInfoTopic}
             onOpenOrders={() => navigateTo('orders')}
+            onOpenPrivacy={() => navigateTo('privacy')}
+            onOpenTerms={() => navigateTo('terms')}
           />
         </div>
       ) : (
-        /* VIEW 2: Flagship Storefront Shell (Home / Category Explorer) */
+        /* VIEW 3: Flagship Storefront Shell (Home / Category Explorer) */
         <div className="min-h-screen bg-canvas text-ink transition-colors duration-200 pb-20 lg:pb-0">
           <TopMarquee announcementText={storeSettings?.announcement_text} />
 
@@ -224,6 +253,8 @@ const StorefrontShell: React.FC = () => {
             onOpenInfo={setInfoTopic}
             onReplayIntro={() => setShowIntro(true)}
             onOpenOrders={() => navigateTo('orders')}
+            onOpenPrivacy={() => navigateTo('privacy')}
+            onOpenTerms={() => navigateTo('terms')}
           />
 
           {/* Mobile Bottom Navigation */}

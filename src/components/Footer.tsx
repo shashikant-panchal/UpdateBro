@@ -10,6 +10,8 @@ interface FooterProps {
   onOpenInfo: (topic: Exclude<InfoModalTopic, null>) => void;
   onReplayIntro?: () => void;
   onOpenOrders?: () => void;
+  onOpenPrivacy?: () => void;
+  onOpenTerms?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -17,6 +19,8 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenInfo,
   onReplayIntro,
   onOpenOrders,
+  onOpenPrivacy,
+  onOpenTerms,
 }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -243,13 +247,32 @@ export const Footer: React.FC<FooterProps> = ({
                 </button>
               </li>
               <li>
-                <button
-                  type="button"
-                  onClick={() => onOpenInfo('privacy')}
-                  className="text-left transition hover:text-ink"
+                <a
+                  href="/privacy-policy"
+                  onClick={(e) => {
+                    if (onOpenPrivacy) {
+                      e.preventDefault();
+                      onOpenPrivacy();
+                    }
+                  }}
+                  className="text-left font-bold text-accent transition hover:underline"
                 >
-                  Privacy Policy &amp; E-Waste Compliance
-                </button>
+                  Privacy Policy &amp; Compliance
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/terms-of-service"
+                  onClick={(e) => {
+                    if (onOpenTerms) {
+                      e.preventDefault();
+                      onOpenTerms();
+                    }
+                  }}
+                  className="text-left font-bold text-accent transition hover:underline"
+                >
+                  Terms of Service &amp; Usage
+                </a>
               </li>
               {onOpenOrders && (
                 <li>

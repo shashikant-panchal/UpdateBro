@@ -193,9 +193,24 @@ export const AuthModal: React.FC = () => {
               </button>
 
               <p className="text-center text-[11px] text-muted leading-relaxed">
-                By continuing, you agree to UPDATE BRO's{' '}
-                <span className="text-ink font-semibold">Terms of Service</span> and{' '}
-                <span className="text-ink font-semibold">Privacy Policy</span>.
+                By continuing, you agree to UPDATE BRO&apos;s{' '}
+                <a
+                  href="/terms-of-service"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-accent underline hover:text-accent-hover transition"
+                >
+                  Terms of Service
+                </a>{' '}
+                and{' '}
+                <a
+                  href="/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-accent underline hover:text-accent-hover transition"
+                >
+                  Privacy Policy
+                </a>.
               </p>
             </div>
           )}
