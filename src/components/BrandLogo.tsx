@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { LOGO_PATHS } from '../data/logoPaths';
+import { StorefrontContext } from '../context/StorefrontContext';
 
 export type BrandLogoVariant = 'full' | 'horizontal' | 'monogram' | 'monogramReg' | 'wordmark' | 'official';
 
@@ -9,11 +10,12 @@ interface BrandLogoProps {
   color?: string;
   showSubtitle?: boolean;
   ariaLabel?: string;
+  tagline?: string;
 }
 
 /**
  * UpdateBro (UB) Official Brand Logo
- * Geometric Monogram, Dynamic Extended Wordmark, and "Power Your World" tagline.
+ * Geometric Monogram, Dynamic Extended Wordmark, and configurable brand tagline.
  * Adaptive via `currentColor` and branded cyber-orange accents (#FF6A00).
  */
 export const BrandLogo: React.FC<BrandLogoProps> = ({
@@ -21,8 +23,11 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   className = '',
   color,
   showSubtitle = true,
-  ariaLabel = 'UPDATE BRO® — Power Your World',
+  ariaLabel = 'UPDATE BRO®',
+  tagline: propTagline,
 }) => {
+  const storefront = useContext(StorefrontContext);
+  const activeTagline = propTagline || storefront?.storeSettings?.tagline || 'Power Your World';
   if (variant === 'official') {
     return (
       <div className={`relative inline-block overflow-hidden rounded-xl ${className}`}>
@@ -115,12 +120,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           <path d={LOGO_PATHS.wordmark.d} />
         </svg>
 
-        {/* Power Your World */}
+        {/* Brand Tagline */}
         {showSubtitle && (
           <div className="mt-3 flex items-center gap-2">
             <span className="h-[1px] w-6 bg-gradient-to-r from-transparent to-accent/80 sm:w-8" />
             <span className="text-[9px] font-black uppercase tracking-[0.24em] text-accent sm:text-[10px]">
-              Power Your World
+              {activeTagline}
             </span>
             <span className="h-[1px] w-6 bg-gradient-to-l from-transparent to-accent/80 sm:w-8" />
           </div>
@@ -164,7 +169,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           <div className="mt-0.5 flex items-center gap-1">
             <span className="h-[1px] w-3 bg-accent/60" />
             <span className="text-[7.5px] font-black uppercase tracking-[0.18em] text-accent sm:text-[8px]">
-              Power Your World
+              {activeTagline}
             </span>
           </div>
         )}

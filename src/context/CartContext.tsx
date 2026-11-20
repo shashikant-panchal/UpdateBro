@@ -19,7 +19,7 @@ interface CartContextValue {
   total: number;
   freeShippingProgress: number;
   amountToFreeShipping: number;
-  setIsCartOpen: (open: boolean) => void;
+  setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
   addToCart: (product: Product, color: ColorVariant, qty?: number, openDrawer?: boolean) => void;
   updateQuantity: (key: string, delta: number) => void;
   removeFromCart: (key: string) => void;

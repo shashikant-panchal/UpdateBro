@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Flame, Plus, Star, Timer, Zap } from 'lucide-react';
-import { PRODUCTS } from '../data/catalog';
 import { useCountdown } from '../hooks/useCountdown';
 import { useCart } from '../context/CartContext';
 import { useMotionConfig } from '../hooks/useMotionConfig';
+import { useStorefront } from '../context/StorefrontContext';
+import { SkeletonWidget } from './Skeletons';
 import type { Product } from '../types';
 import { ProductArt } from './ProductArt';
 import { Tilt3DCard } from './motion/Tilt3DCard';
@@ -14,13 +15,23 @@ interface FlashDealsProps {
 }
 
 export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
+  const { bestSellers, isLoading } = useStorefront();
   const countdown = useCountdown(5 * 3600 + 42 * 60 + 18);
   const { addToCart } = useCart();
   const { isReduced } = useMotionConfig();
 
-  const flashProducts = PRODUCTS.filter((p) => p.isFlashDeal);
   const [selectedColors, setSelectedColors] = useState<Record<string, number>>({});
   const [addedId, setAddedId] = useState<string | null>(null);
+
+  if (isLoading) {
+    return <SkeletonWidget title="🔥 Best Sellers & Top Trending" badge="Best Sellers" cardsCount={5} />;
+  }
+
+  const dealProducts = bestSellers;
+
+  if (dealProducts.length === 0) {
+    return null;
+  }
 
   const handleQuickAdd = (product: Product) => {
     const colorIdx = selectedColors[product.id] ?? 0;
@@ -70,8 +81,8 @@ export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
         </div>
 
         {/* Horizontal Deal Cards */}
-        <div className="no-scrollbar -mx-2 mt-6 flex gap-4 overflow-x-auto px-2 pb-2 lg:grid lg:grid-cols-5 lg:overflow-visible">
-          {flashProducts.map((product, idx) => {
+        <div className="no-scrollbar -mx-2 mt-6 flex gap-2.5 overflow-x-auto px-2 pb-2 sm:gap-3.5 lg:grid lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6 lg:overflow-visible">
+          {dealProducts.map((product, idx) => {
             const cIdx = selectedColors[product.id] ?? 0;
             const activeColor = product.colors[cIdx];
             const claimed = product.claimedPercent ?? 78;
@@ -84,19 +95,19 @@ export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.35, delay: idx * 0.05 }}
-                className="w-64 shrink-0 lg:w-auto"
+                className="w-40 sm:w-48 md:w-52 shrink-0 lg:w-auto"
               >
                 <Tilt3DCard
                   maxTilt={8}
                   scaleOnHover={1.02}
                   glareOpacity={0.2}
-                  className="flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface p-3.5 transition-colors hover:border-accent hover:shadow-glow"
+                  className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface p-2.5 sm:p-3 transition-colors hover:border-accent hover:shadow-glow"
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="rounded-full bg-accent/20 px-2.5 py-0.5 text-[10px] font-extrabold text-accent">
+                  <div className="flex items-center justify-between gap-1.5">
+                    <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[9px] font-extrabold text-accent">
                       {product.discountPercent}% OFF
                     </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-ink">
+                    <span className="inline-flex items-center gap-0.5 text-[10px] sm:text-[11px] font-bold text-ink">
                       <Star className="h-3 w-3 fill-[#FF9500] text-[#FF9500]" />
                       {product.rating}
                     </span>
@@ -106,7 +117,7 @@ export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
                   <button
                     type="button"
                     onClick={() => onQuickView(product)}
-                    className="group relative my-2.5 block aspect-square w-full overflow-hidden rounded-xl bg-cloud/75 transition"
+                    className="group relative my-2 block aspect-square w-full overflow-hidden rounded-xl bg-cloud/75 transition"
                   >
                     <div className="h-full w-full transition-transform duration-500 group-hover:scale-105">
                       <ProductArt
@@ -122,16 +133,16 @@ export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
                   <button
                     type="button"
                     onClick={() => onQuickView(product)}
-                    className="truncate text-left text-sm font-bold text-ink hover:underline"
+                    className="truncate text-left text-xs sm:text-sm font-bold text-ink hover:underline"
                   >
                     {product.name}
                   </button>
-                  <p className="mt-0.5 truncate text-[11px] font-medium text-muted">
+                  <p className="mt-0.5 truncate text-[10px] sm:text-[11px] font-medium text-muted">
                     {product.highlightBar}
                   </p>
 
                   {/* Color Swatch Dots */}
-                  <div className="mt-2.5 flex items-center gap-1.5">
+                  <div className="mt-2 flex items-center gap-1.5">
                     {product.colors.map((c, i) => (
                       <button
                         key={c.id}
@@ -139,7 +150,7 @@ export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
                         onClick={() => setSelectedColors((prev) => ({ ...prev, [product.id]: i }))}
                         title={c.name}
                         aria-label={`Select ${c.name}`}
-                        className={`h-4 w-4 rounded-full border transition ${
+                        className={`h-3.5 w-3.5 rounded-full border transition ${
                           cIdx === i
                             ? 'scale-110 border-ink ring-2 ring-accent/60'
                             : 'border-black/15 opacity-80 hover:opacity-100 dark:border-white/20'
@@ -150,8 +161,8 @@ export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
                   </div>
 
                   {/* Stock Claimed Progress Bar */}
-                  <div className="mt-3">
-                    <div className="mb-1 flex items-center justify-between text-[10px] font-bold">
+                  <div className="mt-2.5">
+                    <div className="mb-1 flex items-center justify-between text-[9px] sm:text-[10px] font-bold">
                       <span className="text-muted">{claimed}% Claimed</span>
                       <span className="text-accent font-extrabold">
                         Only {product.stockLeft} left
@@ -169,19 +180,19 @@ export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
                   </div>
 
                   {/* Price & Quick Add */}
-                  <div className="mt-auto pt-3.5 flex items-center justify-between border-t border-line">
-                    <div>
-                      <span className="font-mono text-base font-extrabold text-ink">
+                  <div className="mt-auto pt-2.5 flex items-center justify-between border-t border-line">
+                    <div className="min-w-0">
+                      <span className="font-mono text-sm sm:text-base font-extrabold text-ink truncate">
                         ₹{product.price.toLocaleString('en-IN')}
                       </span>
-                      <span className="ml-1.5 font-mono text-xs text-muted line-through">
+                      <span className="ml-1 font-mono text-[10px] sm:text-xs text-muted line-through shrink-0">
                         ₹{product.mrp.toLocaleString('en-IN')}
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleQuickAdd(product)}
-                      className={`inline-flex h-8 items-center gap-1 rounded-btn px-2.5 text-xs font-bold transition ${
+                      className={`inline-flex h-7 sm:h-8 items-center gap-1 rounded-xl px-2 sm:px-2.5 text-[11px] sm:text-xs font-bold transition shrink-0 ${
                         isAdded
                           ? 'bg-ink text-canvas dark:bg-white dark:text-black'
                           : 'bg-accent text-accent-ink hover:bg-accent-hover shadow-sm hover:shadow-glow'
@@ -189,12 +200,12 @@ export const FlashDeals: React.FC<FlashDealsProps> = ({ onQuickView }) => {
                     >
                       {isAdded ? (
                         <>
-                          <Check className="h-3.5 w-3.5" />
+                          <Check className="h-3 w-3" />
                           <span>Added</span>
                         </>
                       ) : (
                         <>
-                          <Plus className="h-3.5 w-3.5" />
+                          <Plus className="h-3 w-3" />
                           <span>Add</span>
                         </>
                       )}

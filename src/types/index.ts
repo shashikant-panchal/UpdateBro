@@ -84,6 +84,10 @@ export interface Product {
   warranty: string;
   inBox: string[];
   description: string;
+  isFeatured?: boolean;
+  isBestSeller?: boolean;
+  isNewArrival?: boolean;
+  isCombo?: boolean;
 }
 
 export interface CategoryMeta {
@@ -158,6 +162,9 @@ export interface OrderRecord {
   orderId: string;
   createdAt: string;
   customerName: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  shippingAddress?: string;
   city: string;
   paymentMethod: string;
   total: number;

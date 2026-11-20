@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import { CATEGORIES, PRODUCTS } from '../data/catalog';
 import { useMotionConfig } from '../hooks/useMotionConfig';
+import { useStorefront } from '../context/StorefrontContext';
+import { SkeletonCategoryStrip } from './Skeletons';
 import type { CategoryId } from '../types';
 import { Tilt3DCard } from './motion/Tilt3DCard';
 
@@ -15,12 +16,21 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
   activeCategory,
   onSelectCategory,
 }) => {
+  const { categories, products, isLoading } = useStorefront();
   const { isReduced } = useMotionConfig();
   const railRef = useRef<HTMLDivElement>(null);
 
   const scrollRail = (offset: number) => {
     railRef.current?.scrollBy({ left: offset, behavior: 'smooth' });
   };
+
+  if (isLoading) {
+    return <SkeletonCategoryStrip />;
+  }
+
+  if (categories.length === 0) {
+    return null;
+  }
 
   return (
     <section id="categories-strip" className="mx-auto max-w-[1920px] px-4 pt-10 sm:px-6 sm:pt-12 md:px-8 lg:px-12 2xl:px-16 3xl:px-20">
@@ -68,14 +78,13 @@ export const CategoryStrip: React.FC<CategoryStripProps> = ({
         </div>
       </div>
 
-      {/* boAt-Inspired Strip across 10 Hardware Categories (fluid rail on mobile/laptop, full-width 10-col grid on wide monitors) */}
       <div
         ref={railRef}
         className="no-scrollbar -mx-4 flex gap-3.5 overflow-x-auto px-4 pb-2 sm:-mx-0 sm:gap-4 sm:px-0 2xl:grid 2xl:grid-cols-10 2xl:gap-3 3xl:gap-4 2xl:overflow-visible"
       >
-        {CATEGORIES.map((cat, idx) => {
+        {categories.map((cat, idx) => {
           const isActive = activeCategory === cat.id;
-          const productCount = PRODUCTS.filter((p) => p.category === cat.id).length;
+          const productCount = products.filter((p) => p.category === cat.id).length;
           const isComingSoon = productCount === 0;
 
           return (

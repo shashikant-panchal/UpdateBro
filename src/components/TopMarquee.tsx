@@ -2,8 +2,16 @@ import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { MARQUEE_MESSAGES } from '../data/storefront';
 
-export const TopMarquee: React.FC = () => {
+interface TopMarqueeProps {
+  announcementText?: string;
+}
+
+export const TopMarquee: React.FC<TopMarqueeProps> = ({ announcementText }) => {
   const [copied, setCopied] = useState(false);
+
+  const messages = announcementText
+    ? [announcementText, ...MARQUEE_MESSAGES]
+    : MARQUEE_MESSAGES;
 
   const handleCopyCode = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -37,7 +45,7 @@ export const TopMarquee: React.FC = () => {
 
         {/* Continuous Smooth Marquee Ticker */}
         <div className="animate-marquee py-2 text-xs font-semibold tracking-wide sm:text-[13px]">
-          {[...MARQUEE_MESSAGES, ...MARQUEE_MESSAGES].map((msg, idx) => (
+          {[...messages, ...messages].map((msg, idx) => (
             <span key={idx} className="mx-6 inline-flex items-center gap-2.5 whitespace-nowrap text-white/85">
               <span>{msg}</span>
               <span className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_#FF6A00]" />

@@ -13,10 +13,14 @@ import {
   Sun,
   X,
   ArrowRight,
+  User,
+  Package,
+  LogOut,
 } from 'lucide-react';
-import { CATEGORIES, PRODUCTS } from '../data/catalog';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useStorefront } from '../context/StorefrontContext';
 import type { CategoryId, Product, ThemeMode } from '../types';
 import { BrandLogo } from './BrandLogo';
 import { ProductArt } from './ProductArt';
@@ -28,6 +32,7 @@ interface NavbarProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   onQuickView: (product: Product) => void;
+  onOpenOrders?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -37,15 +42,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   searchQuery,
   onSearchChange,
   onQuickView,
+  onOpenOrders,
 }) => {
   const { mode, resolvedTheme, setMode, cycleMode } = useTheme();
   const { itemCount, setIsCartOpen, lastAddedTick } = useCart();
+  const { user, profile, openAuthModal, signOut } = useAuth();
+  const { categories, products } = useStorefront();
 
   const [isMegaOpen, setIsMegaOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [cartBounce, setCartBounce] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (lastAddedTick > 0) {
@@ -60,6 +70,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setIsSearchFocused(false);
       }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', onDocClick);
     return () => document.removeEventListener('mousedown', onDocClick);
@@ -67,15 +80,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const predictiveMatches = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return PRODUCTS.slice(0, 5);
-    return PRODUCTS.filter(
+    if (!q) return products.slice(0, 5);
+    return products.filter(
       (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.subtitle.toLowerCase().includes(q) ||
-        p.categoryLabel.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q)
+        (p.name || '').toLowerCase().includes(q) ||
+        (p.subtitle || '').toLowerCase().includes(q) ||
+        (p.categoryLabel || '').toLowerCase().includes(q) ||
+        (p.sku || '').toLowerCase().includes(q)
     ).slice(0, 6);
-  }, [searchQuery]);
+  }, [searchQuery, products]);
 
   const scrollToSection = (id: string) => {
     setIsMobileMenuOpen(false);
@@ -156,7 +169,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
-                      {CATEGORIES.map((cat) => (
+                      {categories.map((cat) => (
                         <button
                           key={cat.id}
                           type="button"
@@ -345,10 +358,87 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="capitalize">{mode} Mode</span>
             </button>
 
+            {/* User Account / Orders Button */}
+            <div ref={userMenuRef} className="relative hidden sm:block">
+              {user ? (
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex h-10 items-center gap-2 rounded-full border border-line bg-surface px-3 text-xs font-bold text-ink transition hover:border-accent"
+                    aria-label="User Account"
+                  >
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-white text-[11px] font-black">
+                      {profile?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+                    </div>
+                    <span className="max-w-[90px] truncate text-left">
+                      {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0]}
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5 text-muted" />
+                  </button>
+
+                  <AnimatePresence>
+                    {isUserMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                        className="absolute right-0 top-12 z-50 w-56 rounded-2xl border border-line bg-surface p-2 shadow-2xl text-xs"
+                      >
+                        <div className="border-b border-line px-3 py-2">
+                          <p className="font-bold text-ink truncate">{profile?.full_name || 'UB Member'}</p>
+                          <p className="font-mono text-[10px] text-muted truncate">{user.email || profile?.phone}</p>
+                        </div>
+
+                        <div className="py-1">
+                          {onOpenOrders && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsUserMenuOpen(false);
+                                onOpenOrders();
+                              }}
+                              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 font-bold text-ink hover:bg-cloud transition"
+                            >
+                              <Package className="h-4 w-4 text-accent" />
+                              <span>My Orders</span>
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="border-t border-line pt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsUserMenuOpen(false);
+                              signOut();
+                            }}
+                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 font-bold text-red-500 hover:bg-red-500/10 transition"
+                          >
+                            <LogOut className="h-4 w-4" />
+                            <span>Sign Out</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={openAuthModal}
+                  className="flex h-10 items-center gap-2 rounded-full border border-line bg-surface px-3.5 text-xs font-bold text-ink transition hover:border-accent"
+                >
+                  <User className="h-4 w-4 text-accent" />
+                  <span>Sign In</span>
+                </button>
+              )}
+            </div>
+
             {/* Cart Button */}
             <motion.button
               type="button"
-              onClick={() => setIsCartOpen(true)}
+              onClick={() => setIsCartOpen((prev) => !prev)}
               animate={cartBounce ? { scale: [1, 1.15, 0.95, 1] } : { scale: 1 }}
               transition={{ duration: 0.35 }}
               className="relative inline-flex h-10 items-center gap-2 rounded-full bg-ink px-4 text-xs font-black uppercase tracking-wider text-canvas shadow-sm transition hover:opacity-90 dark:bg-accent dark:text-accent-ink"
@@ -422,6 +512,61 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className="h-10 w-full rounded-xl border border-line bg-surface pl-9 pr-8 text-xs font-semibold text-ink focus:border-accent focus:outline-none"
                     />
                   </div>
+                </div>
+
+                {/* Account & Orders in Mobile Drawer */}
+                <div className="rounded-2xl border border-line bg-surface p-3.5 space-y-2">
+                  {user ? (
+                    <div>
+                      <div className="flex items-center justify-between pb-2 border-b border-line">
+                        <div className="truncate">
+                          <p className="text-xs font-bold text-ink truncate">{profile?.full_name || 'Member'}</p>
+                          <p className="text-[10px] text-muted truncate">{user.email || profile?.phone}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            signOut();
+                          }}
+                          className="text-[11px] font-bold text-red-500 hover:underline"
+                        >
+                          Sign Out
+                        </button>
+                      </div>
+
+                      <div className="pt-2 space-y-1">
+                        {onOpenOrders && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsMobileMenuOpen(false);
+                              onOpenOrders();
+                            }}
+                            className="flex w-full items-center justify-between rounded-xl p-2.5 text-xs font-bold text-ink hover:bg-cloud"
+                          >
+                            <span className="flex items-center gap-2">
+                              <Package className="h-4 w-4 text-accent" />
+                              <span>Track My Orders</span>
+                            </span>
+                            <ArrowRight className="h-3.5 w-3.5 text-muted" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        openAuthModal();
+                      }}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 text-xs font-bold text-white shadow-glow"
+                    >
+                      <User className="h-4 w-4" />
+                      <span>Sign In / Register</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Theme Selector */}

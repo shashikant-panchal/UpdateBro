@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Check, Instagram, Mail, Send, Twitter, Youtube } from 'lucide-react';
-import { CATEGORIES } from '../data/catalog';
+import { useStorefront } from '../context/StorefrontContext';
 import type { CategoryId } from '../types';
 import { BrandLogo } from './BrandLogo';
 import type { InfoModalTopic } from './InfoModal';
@@ -9,11 +9,18 @@ interface FooterProps {
   onSelectCategory: (cat: CategoryId) => void;
   onOpenInfo: (topic: Exclude<InfoModalTopic, null>) => void;
   onReplayIntro?: () => void;
+  onOpenOrders?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, onReplayIntro }) => {
+export const Footer: React.FC<FooterProps> = ({
+  onSelectCategory,
+  onOpenInfo,
+  onReplayIntro,
+  onOpenOrders,
+}) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const { categories, storeSettings } = useStorefront();
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +92,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
           <div>
             <BrandLogo variant="full" className="text-ink" />
             <p className="mt-2 text-xs font-black uppercase tracking-wider text-accent">
-              Power Your World.
+              {storeSettings?.tagline || 'Power Your World.'}
             </p>
             <p className="mt-2 text-xs leading-relaxed text-muted sm:text-sm">
               UPDATE BRO is a next-generation mobile accessories brand dedicated to delivering quality, performance, reliability and modern technology.
@@ -102,7 +109,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted">Motto:</span>
-                <span className="font-bold text-accent">Power Your World.</span>
+                <span className="font-bold text-accent">{storeSettings?.tagline || 'Power Your World.'}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted">Location:</span>
@@ -113,7 +120,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
             {/* Slogan Lockup */}
             <div className="mt-3 rounded-lg border border-line bg-surface px-3 py-2 text-[11px] font-semibold text-muted">
               <p><span className="font-bold text-accent">UPDATE BRO</span> – Powering Connections.</p>
-              <p className="mt-0.5"><span className="font-bold text-ink">UPDATE BRO®</span> – Power Your World.</p>
+              <p className="mt-0.5"><span className="font-bold text-ink">UPDATE BRO®</span> – {storeSettings?.tagline || 'Power Your World.'}</p>
             </div>
 
             <div className="mt-4 flex items-center gap-2.5">
@@ -141,7 +148,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
               Shop Categories
             </h4>
             <ul className="mt-3 space-y-2 text-xs text-muted sm:text-sm">
-              {CATEGORIES.slice(0, 5).map((c) => (
+              {categories.slice(0, 5).map((c) => (
                 <li key={c.id}>
                   <button
                     type="button"
@@ -160,7 +167,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
               More Gear &amp; Support
             </h4>
             <ul className="mt-3 space-y-2 text-xs text-muted sm:text-sm">
-              {CATEGORIES.slice(5).map((c) => (
+              {categories.slice(5).map((c) => (
                 <li key={c.id}>
                   <button
                     type="button"
@@ -244,6 +251,17 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
                   Privacy Policy &amp; E-Waste Compliance
                 </button>
               </li>
+              {onOpenOrders && (
+                <li>
+                  <button
+                    type="button"
+                    onClick={onOpenOrders}
+                    className="text-left font-bold text-accent transition hover:underline"
+                  >
+                    📦 Track Your Orders Live
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -252,7 +270,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onOpenInfo, on
         <div className="flex flex-col items-center justify-between gap-4 border-t border-line pt-6 sm:flex-row">
           <div className="flex flex-col items-center gap-1 sm:items-start text-xs text-muted">
             <p>
-              © {new Date().getFullYear()} UPDATE BRO® • Power Your World. Hyderabad, Telangana, India.
+              © {new Date().getFullYear()} UPDATE BRO® • {storeSettings?.tagline || 'Power Your World'}. Hyderabad, Telangana, India.
             </p>
             <p className="text-[11px] text-muted/80">
               UPDATE BRO – Powering Connections. All rights reserved.

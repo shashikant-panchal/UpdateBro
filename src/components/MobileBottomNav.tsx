@@ -40,7 +40,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   };
 
   const handleCartClick = () => {
-    setIsCartOpen(true);
+    setIsCartOpen(!isCartOpen);
   };
 
   const handlePersonalizationClick = () => {

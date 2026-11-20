@@ -93,8 +93,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
               {/* Left Visual Showcase */}
               <div className="flex flex-col justify-between bg-cloud/85 p-6 md:col-span-5">
                 <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-surface px-3 py-1 font-mono text-[11px] font-bold text-muted">
-                    {product.sku}
+                  <span className="rounded-full bg-surface px-3 py-1 font-mono text-[11px] font-bold text-ink border border-line shadow-sm">
+                    ID: {product.sku}
                   </span>
                   <BrandLogo variant="horizontal" className="h-5 w-auto" />
                 </div>
@@ -153,7 +153,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                   </div>
 
                   <h2 className="mt-2.5 font-display text-2xl font-bold text-ink">{product.name}</h2>
-                  <p className="mt-1 text-sm text-muted">{product.description}</p>
+                  <p className="mt-1 text-sm text-muted line-clamp-5 leading-relaxed">{product.description}</p>
 
                   {/* Price Row */}
                   <div className="mt-4 flex flex-wrap items-baseline gap-2.5">
@@ -200,15 +200,21 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
 
                   {activeTab === 'specs' ? (
                     <div className="mt-3 divide-y divide-line rounded-btn border border-line bg-cloud/50">
-                      {product.specs.map((sp) => (
-                        <div
-                          key={sp.label}
-                          className="flex items-center justify-between gap-4 px-3.5 py-2 text-xs"
-                        >
-                          <span className="font-medium text-muted">{sp.label}</span>
-                          <span className="text-right font-semibold text-ink">{sp.value}</span>
+                      {product.specs && product.specs.length > 0 ? (
+                        product.specs.map((sp, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between gap-4 px-3.5 py-2 text-xs"
+                          >
+                            <span className="font-medium text-muted">{sp.label}</span>
+                            <span className="text-right font-semibold text-ink">{sp.value}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="p-4 text-center text-xs text-muted">
+                          Standard hardware specifications included with this product.
                         </div>
-                      ))}
+                      )}
                     </div>
                   ) : (
                     <div className="mt-3 space-y-3 rounded-btn border border-line bg-cloud/50 p-4 text-xs">
@@ -216,7 +222,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                         <div>
                           <p className="font-bold text-ink">Official Coverage</p>
-                          <p className="text-muted">{product.warranty}</p>
+                          <p className="text-muted">{product.warranty || '1 Year Official Replacement Warranty'}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2.5">

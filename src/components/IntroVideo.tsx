@@ -120,6 +120,19 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
         onError={onFinished}
         className="h-full w-full portrait:object-contain landscape:object-cover object-center"
       />
+
+      {/* Subtle Skip Button */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onFinished();
+        }}
+        aria-label="Skip Intro"
+        className="absolute top-4 right-4 z-[10000] rounded-full border border-white/20 bg-black/60 px-3.5 py-1.5 text-xs font-bold text-white/90 backdrop-blur-md transition hover:bg-white hover:text-black"
+      >
+        Skip ✕
+      </button>
     </motion.div>
   );
 };

@@ -9,7 +9,8 @@ import {
   SlidersHorizontal,
   Sparkles,
 } from 'lucide-react';
-import { CATEGORIES, PRODUCTS } from '../data/catalog';
+import { useStorefront } from '../context/StorefrontContext';
+import { SkeletonProductGrid } from './Skeletons';
 import type { CategoryId, Product } from '../types';
 import { ProductCard } from './ProductCard';
 
@@ -34,30 +35,31 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   onClearLifestyle,
   onQuickView,
 }) => {
+  const { categories, products, isLoading } = useStorefront();
   const [sortBy, setSortBy] = useState<SortKey>('featured');
   const [notified, setNotified] = useState(false);
   const [email, setEmail] = useState('');
 
   const tabs: { id: CategoryId; label: string; isSoon?: boolean }[] = [
     { id: 'all', label: 'All Gear' },
-    ...CATEGORIES.map((c) => ({
+    ...categories.map((c) => ({
       id: c.id as CategoryId,
-      label: c.shortLabel,
-      isSoon: c.count === 0,
+      label: c.shortLabel || c.label,
+      isSoon: products.filter((p) => p.category === c.id).length === 0,
     })),
   ];
 
   const isComingSoonCategory = useMemo(() => {
     if (activeCategory === 'all') return false;
-    return PRODUCTS.filter((p) => p.category === activeCategory).length === 0;
-  }, [activeCategory]);
+    return products.filter((p) => p.category === activeCategory).length === 0;
+  }, [activeCategory, products]);
 
   const activeCategoryMeta = useMemo(() => {
-    return CATEGORIES.find((c) => c.id === activeCategory);
-  }, [activeCategory]);
+    return categories.find((c) => c.id === activeCategory);
+  }, [activeCategory, categories]);
 
   const filteredProducts = useMemo(() => {
-    let list = [...PRODUCTS];
+    let list = [...products];
 
     if (activeCategory !== 'all') {
       list = list.filter((p) => p.category === activeCategory);
@@ -71,10 +73,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
       const q = searchQuery.trim().toLowerCase();
       list = list.filter(
         (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.subtitle.toLowerCase().includes(q) ||
-          p.categoryLabel.toLowerCase().includes(q) ||
-          p.highlightBar.toLowerCase().includes(q)
+          (p.name || '').toLowerCase().includes(q) ||
+          (p.subtitle || '').toLowerCase().includes(q) ||
+          (p.categoryLabel || '').toLowerCase().includes(q) ||
+          (p.highlightBar || '').toLowerCase().includes(q)
       );
     }
 
@@ -96,7 +98,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     }
 
     return list;
-  }, [activeCategory, activeLifestyle, searchQuery, sortBy]);
+  }, [products, activeCategory, activeLifestyle, searchQuery, sortBy]);
 
   const hasActiveFilters =
     activeCategory !== 'all' || Boolean(searchQuery.trim()) || Boolean(activeLifestyle);
@@ -113,7 +115,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-muted">
-            Full UB Lineup • {PRODUCTS.length} Branded SKUs
+            Full UB Lineup • {products.length} Products Live
           </p>
           <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
             Bestsellers &amp;{' '}
@@ -279,27 +281,35 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
               onClick={resetAllFilters}
               className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-5 py-2.5 text-xs font-bold text-ink transition hover:border-accent hover:bg-accent-soft sm:text-sm"
             >
-              <span>Show All Available Gear ({PRODUCTS.length} Products)</span>
+              <span>Show All Available Gear ({products.length} Products)</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
+      ) : isLoading ? (
+        <div className="mt-8">
+          <SkeletonProductGrid count={8} />
+        </div>
       ) : filteredProducts.length === 0 ? (
         <div className="mt-8 flex flex-col items-center justify-center rounded-card border border-dashed border-line bg-surface px-6 py-16 text-center">
-          <p className="font-display text-lg font-bold text-ink">No matching UPDATE BRO® gear found</p>
+          <p className="font-display text-lg font-bold text-ink">No products found</p>
           <p className="mt-1 text-sm text-muted">
-            Try clearing your search query or switching back to All Gear.
+            {products.length === 0
+              ? 'Catalog items uploading soon. New collections dropping shortly.'
+              : 'Try clearing your search query or switching category filter.'}
           </p>
-          <button
-            type="button"
-            onClick={resetAllFilters}
-            className="mt-5 rounded-btn bg-accent px-5 py-2.5 text-sm font-bold text-accent-ink hover:bg-accent-hover"
-          >
-            Show All {PRODUCTS.length} Products
-          </button>
+          {products.length > 0 && (
+            <button
+              type="button"
+              onClick={resetAllFilters}
+              className="mt-5 rounded-btn bg-accent px-5 py-2.5 text-sm font-bold text-accent-ink hover:bg-accent-hover"
+            >
+              Show All {products.length} Products
+            </button>
+          )}
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
+        <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3.5 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} onQuickView={onQuickView} />
           ))}

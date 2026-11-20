@@ -1,0 +1,31 @@
+name: Supabase Free Tier Keep-Alive
+
+on:
+  schedule:
+    # Run every 4 days at 06:00 UTC
+    - cron: '0 6 */4 * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  ping:
+    name: Ping Supabase Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Lightweight REST Ping
+        run: |
+          URL="${VITE_SUPABASE_URL:-https://abtvblmuszrgjdijjgnm.supabase.co}"
+          KEY="${VITE_SUPABASE_ANON_KEY:-sb_publishable_1VnBjaR2cNctsGW_5JcsBw_6Drr-15d}"
+          echo "Pinging Supabase REST endpoint to keep project active..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X GET \
+            "$URL/rest/v1/store_settings?select=id&limit=1" \
+            -H "apikey: $KEY" \
+            -H "Authorization: Bearer $KEY")
+          echo "Response HTTP Status: $STATUS"
+          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ]; then
+            echo "Supabase keep-alive ping succeeded!"
+          else
+            echo "Warning: Received HTTP $STATUS from Supabase"
+          fi
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}

@@ -16,7 +16,8 @@ import {
   X,
   Zap,
 } from 'lucide-react';
-import { CATEGORIES, PRODUCTS } from '../data/catalog';
+import { useStorefront } from '../context/StorefrontContext';
+import { SkeletonProductGrid } from './Skeletons';
 import { useCart } from '../context/CartContext';
 import { useMotionConfig } from '../hooks/useMotionConfig';
 import type { CategoryId, Product } from '../types';
@@ -48,6 +49,7 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
   searchQuery,
   onSearchChange,
 }) => {
+  const { categories, products, isLoading } = useStorefront();
   const { items, addToCart, updateQuantity } = useCart();
   const { isReduced } = useMotionConfig();
 
@@ -64,17 +66,17 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
         label: 'All Gear',
         shortLabel: 'All Gear',
         tagline: 'Every UPDATE BRO® Drop',
-        image: '/assets/categories/true-wireless-earbuds.jpg',
+        image: '/assets/ub-logo-official.jpg',
       },
-      ...CATEGORIES.map((c) => ({
+      ...categories.map((c) => ({
         id: c.id as CategoryId,
         label: c.label,
-        shortLabel: c.shortLabel,
-        tagline: c.tagline,
-        image: c.image,
+        shortLabel: c.shortLabel || c.label,
+        tagline: c.tagline || 'Curated Hardware',
+        image: c.image || '/assets/ub-logo-official.jpg',
       })),
     ],
-    []
+    [categories]
   );
 
   const currentMeta = useMemo(
@@ -83,9 +85,9 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
   );
 
   const isCategoryEmpty = useMemo(() => {
-    if (activeCategory === 'all') return false;
-    return PRODUCTS.filter((p) => p.category === activeCategory).length === 0;
-  }, [activeCategory]);
+    if (activeCategory === 'all') return products.length === 0;
+    return products.filter((p) => p.category === activeCategory).length === 0;
+  }, [activeCategory, products]);
 
   const isNotified = Boolean(notifiedCategories[activeCategory]);
 
@@ -111,8 +113,8 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
   const filteredProducts = useMemo(() => {
     let list =
       activeCategory === 'all'
-        ? [...PRODUCTS]
-        : PRODUCTS.filter((p) => p.category === activeCategory);
+        ? [...products]
+        : products.filter((p) => p.category === activeCategory);
 
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase();
@@ -230,7 +232,7 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
               const isActive = activeCategory === cat.id;
               const isSoon =
                 cat.id !== 'all' &&
-                PRODUCTS.filter((p) => p.category === cat.id).length === 0;
+                products.filter((p) => p.category === cat.id).length === 0;
 
               return (
                 <button
@@ -314,13 +316,17 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
 
           <AnimatePresence mode="wait">
             <motion.div
-              key={`${activeCategory}-${sortBy}`}
+              key={`${activeCategory}-${sortBy}-${isLoading}`}
               initial={isReduced ? {} : { opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={isReduced ? {} : { opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              {isCategoryEmpty ? (
+              {isLoading ? (
+                <div className="py-2">
+                  <SkeletonProductGrid count={8} />
+                </div>
+              ) : isCategoryEmpty ? (
                 <div className="overflow-hidden rounded-2xl border border-line bg-surface p-5 shadow-soft sm:p-8 lg:p-10">
                   <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-12">
                     {/* Left: Category Card Banner Preview */}
@@ -485,7 +491,7 @@ export const CategoryExplorerView: React.FC<CategoryExplorerViewProps> = ({
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                   {filteredProducts.map((product) => {
                     const cIdx = selectedColors[product.id] ?? 0;
                     const activeColor = product.colors[cIdx] ?? product.colors[0];
