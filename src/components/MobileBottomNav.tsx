@@ -1,29 +1,31 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Home, LayoutGrid, ShoppingBag, Sparkles } from 'lucide-react';
+import { Home, LayoutGrid, ShoppingBag, User } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 interface MobileBottomNavProps {
-  activeView: 'home' | 'category';
+  activeView: 'home' | 'category' | 'orders' | 'profile' | string;
   onGoHome: () => void;
   onOpenCategories: () => void;
-  onOpenPersonalization: () => void;
-  isPersonalizationOpen: boolean;
+  onOpenProfile: () => void;
+  onOpenPersonalization?: () => void;
+  isPersonalizationOpen?: boolean;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   activeView,
   onGoHome,
   onOpenCategories,
-  onOpenPersonalization,
-  isPersonalizationOpen,
+  onOpenProfile,
 }) => {
   const { itemCount, isCartOpen, setIsCartOpen, lastAddedTick } = useCart();
+  const { user, profile } = useAuth();
 
-  const isHomeActive = activeView === 'home' && !isCartOpen && !isPersonalizationOpen;
-  const isCategoryActive = activeView === 'category' && !isCartOpen && !isPersonalizationOpen;
+  const isHomeActive = activeView === 'home' && !isCartOpen;
+  const isCategoryActive = activeView === 'category' && !isCartOpen;
   const isCartActive = isCartOpen;
-  const isPersonalizationActive = isPersonalizationOpen;
+  const isProfileActive = (activeView === 'profile' || activeView === 'orders') && !isCartOpen;
 
   const handleHomeClick = () => {
     if (isCartOpen) setIsCartOpen(false);
@@ -43,9 +45,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     setIsCartOpen(!isCartOpen);
   };
 
-  const handlePersonalizationClick = () => {
+  const handleProfileClick = () => {
     if (isCartOpen) setIsCartOpen(false);
-    onOpenPersonalization();
+    onOpenProfile();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navItems = [
@@ -72,12 +75,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       badge: itemCount > 0 ? (itemCount > 99 ? '99+' : itemCount) : null,
     },
     {
-      id: 'personalization',
-      label: 'Personalize',
-      icon: Sparkles,
-      isActive: isPersonalizationActive,
-      onClick: handlePersonalizationClick,
-      hasDot: true,
+      id: 'profile',
+      label: 'Profile',
+      icon: User,
+      isActive: isProfileActive,
+      onClick: handleProfileClick,
+      userAvatar: user ? (profile?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U') : null,
     },
   ];
 
@@ -102,11 +105,23 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             >
               {/* Icon Container with Badge */}
               <div className="relative">
-                <Icon
-                  className={`h-5 w-5 transition-transform duration-200 group-hover:scale-110 ${
-                    item.isActive ? 'stroke-[2.5px]' : 'stroke-2'
-                  }`}
-                />
+                {item.id === 'profile' && item.userAvatar ? (
+                  <div
+                    className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black transition-transform group-hover:scale-110 ${
+                      item.isActive
+                        ? 'bg-accent text-white shadow-glow'
+                        : 'bg-cloud text-ink border border-line'
+                    }`}
+                  >
+                    {item.userAvatar}
+                  </div>
+                ) : (
+                  <Icon
+                    className={`h-5 w-5 transition-transform duration-200 group-hover:scale-110 ${
+                      item.isActive ? 'stroke-[2.5px]' : 'stroke-2'
+                    }`}
+                  />
+                )}
 
                 {/* Cart Count Badge */}
                 {item.badge !== null && item.badge !== undefined && (
@@ -118,11 +133,6 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   >
                     {item.badge}
                   </motion.span>
-                )}
-
-                {/* Personalization Sparkle Dot */}
-                {item.id === 'personalization' && !item.isActive && (
-                  <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_6px_#FBBF24]" />
                 )}
               </div>
 

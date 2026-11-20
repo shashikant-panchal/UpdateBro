@@ -152,7 +152,7 @@ const StorefrontShell: React.FC = () => {
           onOpenPrivacy={() => navigateTo('privacy')}
         />
       ) : activeView === 'orders' || activeView === 'profile' ? (
-        <div className="min-h-screen bg-canvas text-ink transition-colors duration-200">
+        <div className="min-h-screen bg-canvas text-ink transition-colors duration-200 pb-20 lg:pb-0">
           <TopMarquee announcementText={storeSettings?.announcement_text} />
           <Navbar
             activeCategory={activeCategory}
@@ -186,6 +186,17 @@ const StorefrontShell: React.FC = () => {
             }}
             onOpenPrivacy={() => navigateTo('privacy')}
             onOpenTerms={() => navigateTo('terms')}
+          />
+
+          {/* Mobile Bottom Navigation */}
+          <MobileBottomNav
+            activeView={activeView}
+            onGoHome={handleBackHome}
+            onOpenCategories={() => handleOpenCategory('all')}
+            onOpenProfile={() => {
+              setProfileInitialTab('details');
+              navigateTo('profile');
+            }}
           />
         </div>
       ) : (
@@ -275,8 +286,10 @@ const StorefrontShell: React.FC = () => {
             activeView={activeView === 'category' ? 'category' : 'home'}
             onGoHome={handleBackHome}
             onOpenCategories={() => handleOpenCategory('all')}
-            onOpenPersonalization={() => setIsPersonalizationOpen(true)}
-            isPersonalizationOpen={isPersonalizationOpen}
+            onOpenProfile={() => {
+              setProfileInitialTab('details');
+              navigateTo('profile');
+            }}
           />
         </div>
       )}
