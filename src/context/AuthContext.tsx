@@ -84,6 +84,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
+    // Check if returning from Google OAuth with an error query/hash
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const oauthErr =
+        searchParams.get('error_description') ||
+        searchParams.get('error') ||
+        hashParams.get('error_description') ||
+        hashParams.get('error');
+
+      if (oauthErr) {
+        console.warn('Google OAuth Authentication Error:', oauthErr);
+        // Clean URL to prevent error parameters lingering in browser address bar
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    } catch {}
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -115,13 +132,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = async () => {
     if (!isSupabaseConfigured) {
-      alert('Supabase is not configured yet. Please check your .env.local file.');
+      alert('Supabase is not configured yet. Please check your configuration.');
       return;
     }
+    const redirectOrigin =
+      typeof window !== 'undefined' && window.location.origin
+        ? window.location.origin
+        : 'https://www.updatebro.in';
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin,
+        redirectTo: redirectOrigin,
+        queryParams: {
+          prompt: 'select_account',
+          access_type: 'offline',
+        },
       },
     });
     if (error) throw error;
