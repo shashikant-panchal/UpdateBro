@@ -146,6 +146,11 @@ export function useStorefrontData() {
       const fetchedCategories = (categoriesRes.data as DbCategory[]) || [];
       const fetchedProducts = (productsRes.data as DbProduct[]) || [];
       const rawSettings = settingsRes.data as DbStoreSettings | null;
+      const effectiveTagline =
+        rawSettings?.tagline?.trim() ||
+        rawSettings?.announcement_text?.trim() ||
+        'Power Your World';
+
       const fetchedSettings: DbStoreSettings = {
         id: 1,
         announcement_text: rawSettings?.announcement_text || '',
@@ -153,7 +158,7 @@ export function useStorefrontData() {
         shipping_charge: Number(rawSettings?.shipping_charge || 0),
         free_shipping_above: Number(rawSettings?.free_shipping_above || 0),
         cod_enabled: rawSettings?.cod_enabled ?? true,
-        tagline: rawSettings?.tagline || 'Power Your World',
+        tagline: effectiveTagline,
       };
 
       // 1. Settings
@@ -328,7 +333,7 @@ export function useStorefrontData() {
       }
       debounceTimerRef.current = window.setTimeout(() => {
         fetchStorefrontData(true);
-      }, 1500);
+      }, 400);
     };
 
     const channel = supabase
