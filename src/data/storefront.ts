@@ -176,7 +176,7 @@ export const POWER_COMBOS: BundleCombo[] = [
 
 export const MARQUEE_MESSAGES = [
   '🚧 Website is Still in Development — Preview & Testing Mode',
-  '⚡ UPDATE BRO® — Power Your World',
+  '⚡ UPDATE BRO® — Official Flagship Drops',
   '🛡️ 1-Year Instant Replacement Warranty across 700+ Centers',
   '🚧 Website is Still in Development — Official Launch Coming Soon',
   '🎁 Use Code UPDATE10 for Flat 10% OFF at Checkout',

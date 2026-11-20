@@ -109,8 +109,8 @@ export const AuthModal: React.FC = () => {
             <BrandLogo variant="monogram" className="h-7 w-7 text-accent" />
             <span className="font-display font-black text-xl tracking-tight text-ink">UPDATE BRO®</span>
           </div>
-          <span className="mt-1 text-[11px] font-black uppercase tracking-wider text-accent">
-            Power Your World.
+          <span className="mt-1 text-[11px] font-semibold text-muted">
+            Official Customer Portal
           </span>
         </div>
 

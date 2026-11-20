@@ -15,6 +15,7 @@ import {
   ArrowRight,
   User,
   Package,
+  Palette,
   LogOut,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
@@ -33,6 +34,7 @@ interface NavbarProps {
   onSearchChange: (q: string) => void;
   onQuickView: (product: Product) => void;
   onOpenOrders?: () => void;
+  onOpenProfile?: (initialTab?: 'details' | 'orders' | 'personalization') => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -43,6 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSearchChange,
   onQuickView,
   onOpenOrders,
+  onOpenProfile,
 }) => {
   const { mode, resolvedTheme, setMode, cycleMode } = useTheme();
   const { itemCount, setIsCartOpen, lastAddedTick } = useCart();
@@ -203,8 +206,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                     <div className="mt-3 flex items-center justify-between border-t border-line pt-2.5 text-[10px] text-muted">
                       <span>
-                        <strong className="text-ink">UPDATE BRO®</strong> •{' '}
-                        <strong className="text-accent">Power Your World.</strong> (Hyderabad)
+                        <strong className="text-ink">UPDATE BRO®</strong> • Official Store (Hyderabad)
                       </span>
                       <a
                         href="https://www.updatebro.in"
@@ -322,8 +324,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                     <div className="mt-3 flex items-center justify-between border-t border-line pt-2.5 text-[10px] text-muted">
                       <span>
-                        <strong className="text-ink">UPDATE BRO®</strong> •{' '}
-                        <strong className="text-accent">Power Your World.</strong> (Hyderabad)
+                        <strong className="text-ink">UPDATE BRO®</strong> • Official Store (Hyderabad)
                       </span>
                       <a
                         href="https://www.updatebro.in"
@@ -383,27 +384,67 @@ export const Navbar: React.FC<NavbarProps> = ({
                         initial={{ opacity: 0, y: 8, scale: 0.96 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                        className="absolute right-0 top-12 z-50 w-56 rounded-2xl border border-line bg-surface p-2 shadow-2xl text-xs"
+                        className="absolute right-0 top-12 z-50 w-60 rounded-2xl border border-line bg-surface p-2 shadow-2xl text-xs"
                       >
-                        <div className="border-b border-line px-3 py-2">
-                          <p className="font-bold text-ink truncate">{profile?.full_name || 'UB Member'}</p>
-                          <p className="font-mono text-[10px] text-muted truncate">{user.email || profile?.phone}</p>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserMenuOpen(false);
+                            if (onOpenProfile) onOpenProfile('details');
+                            else onOpenOrders?.();
+                          }}
+                          className="w-full text-left border-b border-line px-3 py-2.5 rounded-xl hover:bg-cloud/60 transition group"
+                        >
+                          <div className="flex items-center justify-between">
+                            <p className="font-bold text-ink truncate group-hover:text-accent">
+                              {profile?.full_name || 'UB Member'}
+                            </p>
+                            <span className="text-[10px] font-bold text-accent uppercase tracking-wider">
+                              View Profile
+                            </span>
+                          </div>
+                          <p className="font-mono text-[10px] text-muted truncate mt-0.5">
+                            {user.email || profile?.phone}
+                          </p>
+                        </button>
 
-                        <div className="py-1">
-                          {onOpenOrders && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setIsUserMenuOpen(false);
-                                onOpenOrders();
-                              }}
-                              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 font-bold text-ink hover:bg-cloud transition"
-                            >
-                              <Package className="h-4 w-4 text-accent" />
-                              <span>My Orders</span>
-                            </button>
-                          )}
+                        <div className="py-1 space-y-0.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsUserMenuOpen(false);
+                              if (onOpenProfile) onOpenProfile('details');
+                            }}
+                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 font-bold text-ink hover:bg-cloud transition"
+                          >
+                            <User className="h-4 w-4 text-accent" />
+                            <span>My Profile &amp; Address</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsUserMenuOpen(false);
+                              if (onOpenProfile) onOpenProfile('orders');
+                              else onOpenOrders?.();
+                            }}
+                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 font-bold text-ink hover:bg-cloud transition"
+                          >
+                            <Package className="h-4 w-4 text-accent" />
+                            <span>My Orders &amp; Tracking</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsUserMenuOpen(false);
+                              if (onOpenProfile) onOpenProfile('personalization');
+                            }}
+                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 font-bold text-ink hover:bg-cloud transition"
+                          >
+                            <Palette className="h-4 w-4 text-accent" />
+                            <span>Theme &amp; Preferences</span>
+                          </button>
                         </div>
 
                         <div className="border-t border-line pt-1">
@@ -518,54 +559,110 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="rounded-2xl border border-line bg-surface p-3.5 space-y-2">
                   {user ? (
                     <div>
-                      <div className="flex items-center justify-between pb-2 border-b border-line">
-                        <div className="truncate">
-                          <p className="text-xs font-bold text-ink truncate">{profile?.full_name || 'Member'}</p>
-                          <p className="text-[10px] text-muted truncate">{user.email || profile?.phone}</p>
-                        </div>
+                      <div className="flex items-center justify-between pb-2.5 border-b border-line">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            if (onOpenProfile) onOpenProfile('details');
+                          }}
+                          className="flex items-center gap-2 text-left truncate min-w-0"
+                        >
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-white font-black text-xs">
+                            {profile?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+                          </div>
+                          <div className="truncate">
+                            <p className="text-xs font-bold text-ink truncate hover:text-accent">
+                              {profile?.full_name || 'Member'}
+                            </p>
+                            <p className="text-[10px] text-muted truncate">{user.email || profile?.phone}</p>
+                          </div>
+                        </button>
                         <button
                           type="button"
                           onClick={() => {
                             setIsMobileMenuOpen(false);
                             signOut();
                           }}
-                          className="text-[11px] font-bold text-red-500 hover:underline"
+                          className="text-[11px] font-bold text-red-500 hover:underline shrink-0 ml-2"
                         >
                           Sign Out
                         </button>
                       </div>
 
                       <div className="pt-2 space-y-1">
-                        {onOpenOrders && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsMobileMenuOpen(false);
-                              onOpenOrders();
-                            }}
-                            className="flex w-full items-center justify-between rounded-xl p-2.5 text-xs font-bold text-ink hover:bg-cloud"
-                          >
-                            <span className="flex items-center gap-2">
-                              <Package className="h-4 w-4 text-accent" />
-                              <span>Track My Orders</span>
-                            </span>
-                            <ArrowRight className="h-3.5 w-3.5 text-muted" />
-                          </button>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            if (onOpenProfile) onOpenProfile('details');
+                          }}
+                          className="flex w-full items-center justify-between rounded-xl p-2.5 text-xs font-bold text-ink hover:bg-cloud"
+                        >
+                          <span className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-accent" />
+                            <span>My Profile &amp; Address</span>
+                          </span>
+                          <ArrowRight className="h-3.5 w-3.5 text-muted" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            if (onOpenProfile) onOpenProfile('orders');
+                            else onOpenOrders?.();
+                          }}
+                          className="flex w-full items-center justify-between rounded-xl p-2.5 text-xs font-bold text-ink hover:bg-cloud"
+                        >
+                          <span className="flex items-center gap-2">
+                            <Package className="h-4 w-4 text-accent" />
+                            <span>Track My Orders</span>
+                          </span>
+                          <ArrowRight className="h-3.5 w-3.5 text-muted" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            if (onOpenProfile) onOpenProfile('personalization');
+                          }}
+                          className="flex w-full items-center justify-between rounded-xl p-2.5 text-xs font-bold text-ink hover:bg-cloud"
+                        >
+                          <span className="flex items-center gap-2">
+                            <Palette className="h-4 w-4 text-accent" />
+                            <span>Theme &amp; Preferences</span>
+                          </span>
+                          <ArrowRight className="h-3.5 w-3.5 text-muted" />
+                        </button>
                       </div>
                     </div>
                   ) : (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        openAuthModal();
-                      }}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 text-xs font-bold text-white shadow-glow"
-                    >
-                      <User className="h-4 w-4" />
-                      <span>Sign In / Register</span>
-                    </button>
+                    <div className="space-y-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          openAuthModal();
+                        }}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 text-xs font-bold text-white shadow-glow"
+                      >
+                        <User className="h-4 w-4" />
+                        <span>Sign In / Register</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          if (onOpenProfile) onOpenProfile('details');
+                        }}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface py-2 text-xs font-bold text-ink hover:bg-cloud transition"
+                      >
+                        <User className="h-3.5 w-3.5 text-accent" />
+                        <span>My Profile &amp; Address</span>
+                      </button>
+                    </div>
                   )}
                 </div>
 
@@ -623,18 +720,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="rounded-2xl border border-line bg-cloud/60 p-3.5 text-xs">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-ink">UPDATE BRO®</span>
-                    <span className="text-[10px] font-black uppercase text-accent">Power Your World.</span>
+                    <span className="text-[10px] font-bold text-muted">Hyderabad, India</span>
                   </div>
                   <p className="mt-1 text-[11px] text-muted">
                     Next-generation mobile &amp; audio accessories
                   </p>
-                  <div className="mt-2 text-[10px] text-muted space-y-0.5 border-t border-line/60 pt-2">
-                    <p>Hyderabad, Telangana, India</p>
-                  </div>
-                  <div className="mt-2 text-[9px] text-muted/80">
-                    <p>UPDATE BRO – Powering Connections.</p>
-                    <p className="font-semibold text-accent">Power Your World – Every Device, Everywhere.</p>
-                  </div>
                 </div>
               </div>
             </motion.aside>

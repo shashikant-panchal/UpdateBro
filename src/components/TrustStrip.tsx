@@ -83,8 +83,6 @@ export const TrustStrip: React.FC = () => {
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
               <span className="font-display text-sm font-black text-ink">UPDATE BRO®</span>
               <span className="text-xs text-muted">•</span>
-              <span className="text-xs font-extrabold text-accent">Power Your World.</span>
-              <span className="text-xs text-muted">•</span>
               <span className="text-xs font-semibold text-muted">
                 Premium Next-Gen Mobile &amp; Audio Accessories
               </span>

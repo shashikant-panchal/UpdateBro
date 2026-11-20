@@ -8,7 +8,6 @@ import type { InfoModalTopic } from './InfoModal';
 interface FooterProps {
   onSelectCategory: (cat: CategoryId) => void;
   onOpenInfo: (topic: Exclude<InfoModalTopic, null>) => void;
-  onReplayIntro?: () => void;
   onOpenOrders?: () => void;
   onOpenPrivacy?: () => void;
   onOpenTerms?: () => void;
@@ -17,14 +16,13 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({
   onSelectCategory,
   onOpenInfo,
-  onReplayIntro,
   onOpenOrders,
   onOpenPrivacy,
   onOpenTerms,
 }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
-  const { categories, storeSettings } = useStorefront();
+  const { categories } = useStorefront();
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,14 +93,11 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="grid grid-cols-1 gap-8 pb-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <BrandLogo variant="full" className="text-ink" />
-            <p className="mt-2 text-xs font-black uppercase tracking-wider text-accent">
-              {storeSettings?.tagline || 'Power Your World.'}
-            </p>
-            <p className="mt-2 text-xs leading-relaxed text-muted sm:text-sm">
+            <p className="mt-3 text-xs leading-relaxed text-muted sm:text-sm">
               UPDATE BRO is a next-generation mobile accessories brand dedicated to delivering quality, performance, reliability and modern technology.
             </p>
             <p className="mt-1 text-xs text-muted">
-              We specialize in innovative fast chargers, data cables, power banks, car chargers, TWS earbuds and connectivity solutions.
+              Specialized fast chargers, braided cables, power banks, car adapters, TWS earbuds and premium connectivity solutions.
             </p>
 
             {/* Corporate Directory Card */}
@@ -112,19 +107,9 @@ export const Footer: React.FC<FooterProps> = ({
                 <span className="font-bold text-ink">UPDATE BRO®</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted">Motto:</span>
-                <span className="font-bold text-accent">{storeSettings?.tagline || 'Power Your World.'}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted">Location:</span>
+                <span className="text-muted">HQ:</span>
                 <span className="font-medium text-ink">Hyderabad, Telangana, India</span>
               </div>
-            </div>
-
-            {/* Slogan Lockup */}
-            <div className="mt-3 rounded-lg border border-line bg-surface px-3 py-2 text-[11px] font-semibold text-muted">
-              <p><span className="font-bold text-accent">UPDATE BRO</span> – Powering Connections.</p>
-              <p className="mt-0.5"><span className="font-bold text-ink">UPDATE BRO®</span> – {storeSettings?.tagline || 'Power Your World.'}</p>
             </div>
 
             <div className="mt-4 flex items-center gap-2.5">
@@ -182,26 +167,6 @@ export const Footer: React.FC<FooterProps> = ({
                   </button>
                 </li>
               ))}
-              {onReplayIntro && (
-                <li>
-                  <button
-                    type="button"
-                    onClick={onReplayIntro}
-                    className="inline-flex items-center gap-1.5 text-left font-bold text-accent transition hover:underline"
-                  >
-                    <span>▶ Watch Brand Intro</span>
-                  </button>
-                </li>
-              )}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onOpenInfo('warranty')}
-                  className="text-left font-semibold text-ink transition hover:underline"
-                >
-                  Warranty Registration
-                </button>
-              </li>
             </ul>
           </div>
 
@@ -281,7 +246,7 @@ export const Footer: React.FC<FooterProps> = ({
                     onClick={onOpenOrders}
                     className="text-left font-bold text-accent transition hover:underline"
                   >
-                    📦 Track Your Orders Live
+                    My Account &amp; Orders
                   </button>
                 </li>
               )}
@@ -293,10 +258,10 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="flex flex-col items-center justify-between gap-4 border-t border-line pt-6 sm:flex-row">
           <div className="flex flex-col items-center gap-1 sm:items-start text-xs text-muted">
             <p>
-              © {new Date().getFullYear()} UPDATE BRO® • {storeSettings?.tagline || 'Power Your World'}. Hyderabad, Telangana, India.
+              © {new Date().getFullYear()} UPDATE BRO®. Hyderabad, Telangana, India.
             </p>
             <p className="text-[11px] text-muted/80">
-              UPDATE BRO – Powering Connections. All rights reserved.
+              UPDATE BRO – Official Store. All rights reserved.
             </p>
           </div>
 

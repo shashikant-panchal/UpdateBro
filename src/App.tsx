@@ -24,14 +24,14 @@ import { IntroVideo } from './components/IntroVideo';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { PersonalizationModal } from './components/PersonalizationModal';
 import { AuthModal } from './components/AuthModal';
-import { CustomerOrdersView } from './components/CustomerOrdersView';
+import { UserProfileView, type ProfileTab } from './components/UserProfileView';
 import { NewArrivalsWidget } from './components/NewArrivalsWidget';
 import { PrivacyPolicyView } from './components/PrivacyPolicyView';
 import { TermsOfServiceView } from './components/TermsOfServiceView';
 import { StorefrontProvider, useStorefront } from './context/StorefrontContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
-export type AppView = 'home' | 'category' | 'orders' | 'privacy' | 'terms';
+export type AppView = 'home' | 'category' | 'orders' | 'profile' | 'privacy' | 'terms';
 
 const StorefrontShell: React.FC = () => {
   const { isReduced } = useMotionConfig();
@@ -40,15 +40,18 @@ const StorefrontShell: React.FC = () => {
   // Dynamic Storefront Sync
   const { storeSettings } = useStorefront();
 
-  // Route State derived from URL (Supports /privacy-policy, /terms-of-service, /orders, /category)
+  // Route State derived from URL (Supports /privacy-policy, /terms-of-service, /orders, /profile, /category)
   const [activeView, setActiveView] = useState<AppView>(() => {
     const path = window.location.pathname.toLowerCase();
     if (path.startsWith('/privacy')) return 'privacy';
     if (path.startsWith('/terms')) return 'terms';
     if (path.startsWith('/orders')) return 'orders';
+    if (path.startsWith('/profile') || path.startsWith('/account')) return 'profile';
     if (path.startsWith('/category') || path.startsWith('/categories')) return 'category';
     return 'home';
   });
+
+  const [profileInitialTab, setProfileInitialTab] = useState<ProfileTab>('details');
 
   const [showIntro, setShowIntro] = useState(() => {
     // Clean up any legacy single-play session storage flag
@@ -84,6 +87,8 @@ const StorefrontShell: React.FC = () => {
         setActiveView('terms');
       } else if (p.startsWith('/orders')) {
         setActiveView('orders');
+      } else if (p.startsWith('/profile') || p.startsWith('/account')) {
+        setActiveView('profile');
       } else if (p.startsWith('/category') || p.startsWith('/categories')) {
         setActiveView('category');
       } else {
@@ -99,6 +104,7 @@ const StorefrontShell: React.FC = () => {
     setActiveView(view);
     let targetPath = '/';
     if (view === 'orders') targetPath = '/orders';
+    else if (view === 'profile') targetPath = '/profile';
     else if (view === 'privacy') targetPath = '/privacy-policy';
     else if (view === 'terms') targetPath = '/terms-of-service';
     else if (view === 'category') {
@@ -145,7 +151,7 @@ const StorefrontShell: React.FC = () => {
           onBack={handleBackHome}
           onOpenPrivacy={() => navigateTo('privacy')}
         />
-      ) : activeView === 'orders' ? (
+      ) : activeView === 'orders' || activeView === 'profile' ? (
         <div className="min-h-screen bg-canvas text-ink transition-colors duration-200">
           <TopMarquee announcementText={storeSettings?.announcement_text} />
           <Navbar
@@ -155,15 +161,29 @@ const StorefrontShell: React.FC = () => {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onQuickView={setQuickViewProduct}
-            onOpenOrders={() => navigateTo('orders')}
+            onOpenOrders={() => {
+              setProfileInitialTab('orders');
+              navigateTo('orders');
+            }}
+            onOpenProfile={(tab) => {
+              setProfileInitialTab(tab || 'details');
+              navigateTo('profile');
+            }}
           />
           <main>
-            <CustomerOrdersView onBack={handleBackHome} />
+            <UserProfileView
+              onBack={handleBackHome}
+              initialTab={activeView === 'orders' ? 'orders' : profileInitialTab}
+              onGoHome={handleBackHome}
+            />
           </main>
           <Footer
             onSelectCategory={handleOpenCategory}
             onOpenInfo={setInfoTopic}
-            onOpenOrders={() => navigateTo('orders')}
+            onOpenOrders={() => {
+              setProfileInitialTab('orders');
+              navigateTo('orders');
+            }}
             onOpenPrivacy={() => navigateTo('privacy')}
             onOpenTerms={() => navigateTo('terms')}
           />
@@ -180,7 +200,14 @@ const StorefrontShell: React.FC = () => {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onQuickView={setQuickViewProduct}
-            onOpenOrders={() => navigateTo('orders')}
+            onOpenOrders={() => {
+              setProfileInitialTab('orders');
+              navigateTo('orders');
+            }}
+            onOpenProfile={(tab) => {
+              setProfileInitialTab(tab || 'details');
+              navigateTo('profile');
+            }}
           />
 
           {activeView === 'category' ? (
@@ -235,8 +262,10 @@ const StorefrontShell: React.FC = () => {
           <Footer
             onSelectCategory={handleOpenCategory}
             onOpenInfo={setInfoTopic}
-            onReplayIntro={() => setShowIntro(true)}
-            onOpenOrders={() => navigateTo('orders')}
+            onOpenOrders={() => {
+              setProfileInitialTab('orders');
+              navigateTo('orders');
+            }}
             onOpenPrivacy={() => navigateTo('privacy')}
             onOpenTerms={() => navigateTo('terms')}
           />
@@ -253,7 +282,12 @@ const StorefrontShell: React.FC = () => {
       )}
 
       {/* Global Drawers & Modals (Single Instance Mounted at Root) */}
-      <CartDrawer onOpenOrders={() => navigateTo('orders')} />
+      <CartDrawer
+        onOpenOrders={() => {
+          setProfileInitialTab('orders');
+          navigateTo('orders');
+        }}
+      />
 
       <QuickViewModal
         product={quickViewProduct}
