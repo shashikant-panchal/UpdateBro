@@ -1,59 +1,46 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UPDATE BRO® — Power Your World | Next-Gen Mobile Accessories</title>
-    <meta
-      name="description"
-      content="UPDATE BRO is a next-generation mobile accessories brand — Power Your World. Innovative fast chargers, data cables, power banks, car chargers, TWS earbuds and connectivity solutions."
-    />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
-    <meta name="theme-color" content="#14171F" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script>
-      (function () {
-        try {
-          var mode = localStorage.getItem('ub-theme-mode') || 'light';
-          var dark =
-            mode === 'dark' ||
-            (mode === 'system' &&
-              window.matchMedia &&
-              window.matchMedia('(prefers-color-scheme: dark)').matches);
-          if (dark) document.documentElement.classList.add('dark');
-        } catch (e) {}
-      })();
-    </script>
-  </head>
-  <body class="antialiased selection:bg-accent/30 selection:text-ink">
-    <div id="root">
-      {/* Static SEO & Google OAuth Crawler Fallback (Hydrated by React on mount) */}
-      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: system-ui, -apple-system, sans-serif; text-align: center; padding: 2rem;">
-        <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; color: #111;">UPDATE BRO®</h1>
-        <p style="font-size: 0.95rem; color: #666; max-width: 480px; line-height: 1.5; margin-bottom: 1.5rem;">
-          Power Your World — Next-generation mobile accessories, fast chargers, cables, audio and electronics.
-        </p>
-        <div style="font-size: 0.85rem;">
-          <a href="/privacy-policy" style="color: #ff6600; text-decoration: underline; margin-right: 1rem;">Privacy Policy</a>
-          <a href="/terms-of-service" style="color: #ff6600; text-decoration: underline;">Terms of Service</a>
-        </div>
-      </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPDATE BRO® — Power Your World | Next-Gen Mobile Accessories</title>
+  <meta name="description"
+    content="UPDATE BRO is a next-generation mobile accessories brand — Power Your World. Innovative fast chargers, data cables, power banks, car chargers, TWS earbuds and connectivity solutions." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+  <meta name="theme-color" content="#14171F" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var mode = localStorage.getItem('ub-theme-mode') || 'light';
+        var dark =
+          mode === 'dark' ||
+          (mode === 'system' &&
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark');
+      } catch (e) { }
+    })();
+  </script>
+</head>
+
+<body class="antialiased selection:bg-accent/30 selection:text-ink">
+  <div id="root"></div>
+  <noscript>
+    <div style="padding: 2rem; text-align: center; font-family: sans-serif;">
+      <h2>UPDATE BRO® — Power Your World</h2>
+      <p>
+        <a href="/privacy-policy">Privacy Policy</a> • <a href="/terms-of-service">Terms of Service</a>
+      </p>
     </div>
-    <noscript>
-      <div style="padding: 2rem; text-align: center; font-family: sans-serif;">
-        <h2>UPDATE BRO® — Power Your World</h2>
-        <p>Please enable JavaScript to experience the full UPDATE BRO storefront.</p>
-        <p>
-          <a href="/privacy-policy">Privacy Policy</a> • <a href="/terms-of-service">Terms of Service</a>
-        </p>
-      </div>
-    </noscript>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  </noscript>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>
