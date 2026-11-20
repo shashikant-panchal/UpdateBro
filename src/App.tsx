@@ -52,22 +52,19 @@ const StorefrontShell: React.FC = () => {
   });
 
   const [showIntro, setShowIntro] = useState(() => {
-    const path = window.location.pathname.toLowerCase();
-    // Only show video on initial home landing, skip if directly navigating to subpages or legal docs
-    if (
-      path.startsWith('/orders') ||
-      path.startsWith('/privacy') ||
-      path.startsWith('/terms')
-    ) {
-      return false;
-    }
+    // Clean up any legacy single-play session storage flag
     try {
-      if (sessionStorage.getItem('ub_intro_played') === 'true') {
-        return false;
-      }
+      sessionStorage.removeItem('ub_intro_played');
     } catch {
       // ignore
     }
+
+    const path = window.location.pathname.toLowerCase();
+    // Skip only when directly landing on external legal docs for OAuth review
+    if (path.startsWith('/privacy') || path.startsWith('/terms')) {
+      return false;
+    }
+    // Plays every time the website loads or reloads
     return true;
   });
 
@@ -134,16 +131,11 @@ const StorefrontShell: React.FC = () => {
 
   return (
     <MotionConfig reducedMotion={isReduced ? 'always' : 'user'}>
-      {/* Intro Video */}
+      {/* 2-Second Brand Intro Animation (Plays each time website reloads) */}
       <AnimatePresence>
         {showIntro && (
           <IntroVideo
             onFinished={() => {
-              try {
-                sessionStorage.setItem('ub_intro_played', 'true');
-              } catch {
-                // ignore
-              }
               setShowIntro(false);
             }}
           />
