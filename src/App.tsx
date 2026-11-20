@@ -23,7 +23,6 @@ import { InfoModal, type InfoModalTopic } from './components/InfoModal';
 import { IntroVideo } from './components/IntroVideo';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { PersonalizationModal } from './components/PersonalizationModal';
-import { UnderDevelopmentPopup } from './components/UnderDevelopmentPopup';
 import { AuthModal } from './components/AuthModal';
 import { CustomerOrdersView } from './components/CustomerOrdersView';
 import { NewArrivalsWidget } from './components/NewArrivalsWidget';
@@ -74,7 +73,6 @@ const StorefrontShell: React.FC = () => {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [infoTopic, setInfoTopic] = useState<InfoModalTopic>(null);
   const [isPersonalizationOpen, setIsPersonalizationOpen] = useState(false);
-  const [showDevPopup, setShowDevPopup] = useState(false);
 
   // Synchronize browser history and popstate navigation
   useEffect(() => {
@@ -96,12 +94,6 @@ const StorefrontShell: React.FC = () => {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
-
-  useEffect(() => {
-    if (!showIntro) {
-      setShowDevPopup(true);
-    }
-  }, [showIntro]);
 
   const navigateTo = (view: AppView, cat?: CategoryId) => {
     setActiveView(view);
@@ -276,12 +268,6 @@ const StorefrontShell: React.FC = () => {
       />
 
       <AuthModal />
-
-      <UnderDevelopmentPopup
-        isOpen={!showIntro && showDevPopup}
-        onClose={() => setShowDevPopup(false)}
-        durationMs={4000}
-      />
     </MotionConfig>
   );
 };
