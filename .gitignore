@@ -6,4 +6,5 @@ tsconfig.tsbuildinfo
 .DS_Store
 .env
 .env.*
+!.env.example
 updatebro-admin/

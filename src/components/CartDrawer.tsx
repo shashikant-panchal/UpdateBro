@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import {
   ArrowLeft,
   ArrowRight,
@@ -63,7 +64,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
     recordOrder,
   } = useCart();
 
-  const { user, profile, signInWithGoogle, updateProfile, refreshProfile } = useAuth();
+  const { user, profile, updateProfile, refreshProfile } = useAuth();
   const { products } = useStorefront();
 
   const [step, setStep] = useState<CheckoutStep>('bag');
@@ -245,27 +246,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
       setStep('address');
     } else {
       setStep('payment');
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      setIsAuthenticating(true);
-      setAuthError(null);
-      try {
-        sessionStorage.setItem('ub_pending_checkout', 'true');
-        if (customerName) sessionStorage.setItem('ub_pending_name', customerName);
-        if (phone) sessionStorage.setItem('ub_pending_phone', phone);
-        if (address) sessionStorage.setItem('ub_pending_address', address);
-        if (city) sessionStorage.setItem('ub_pending_city', city);
-        if (pincode) sessionStorage.setItem('ub_pending_pincode', pincode);
-      } catch {
-        // Ignore session storage errors
-      }
-      await signInWithGoogle();
-    } catch (err: unknown) {
-      setAuthError(err instanceof Error ? err.message : 'Google sign-in encountered an error.');
-      setIsAuthenticating(false);
     }
   };
 
@@ -810,36 +790,53 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                   )}
 
                   <div className="mt-8 w-full space-y-3">
-                    {/* Google OAuth Button */}
-                    <button
-                      type="button"
-                      onClick={handleGoogleLogin}
-                      disabled={isAuthenticating}
-                      className="group relative flex h-13 w-full items-center justify-center gap-3 rounded-2xl border-2 border-line bg-surface p-3.5 font-sans font-bold text-ink shadow-sm transition hover:border-[#4285F4] hover:shadow-md disabled:opacity-50"
-                    >
-                      {/* Google G Logo SVG */}
-                      <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
-                        <path
-                          fill="#4285F4"
-                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        />
-                        <path
-                          fill="#34A853"
-                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        />
-                        <path
-                          fill="#FBBC05"
-                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                        />
-                        <path
-                          fill="#EA4335"
-                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                        />
-                      </svg>
-                      <span className="text-sm">
-                        {isAuthenticating ? 'Redirecting to Google...' : 'Continue with Google'}
-                      </span>
-                    </button>
+                    {/* Direct Frontend Google Sign-In with ID Token (Domain Stays On www.updatebro.in) */}
+                    <div className="flex justify-center w-full py-1">
+                      <GoogleLogin
+                        onSuccess={async (credentialResponse: CredentialResponse) => {
+                          if (!credentialResponse.credential) {
+                            setAuthError('Google sign-in did not return a valid credential token.');
+                            return;
+                          }
+                          try {
+                            setIsAuthenticating(true);
+                            setAuthError(null);
+                            const { error } = await supabase.auth.signInWithIdToken({
+                              provider: 'google',
+                              token: credentialResponse.credential,
+                            });
+                            if (error) throw error;
+                            // Check profile details and advance seamlessly
+                            const cleanPhone = (phone || profile?.phone || '').replace(/\D/g, '');
+                            const currentAddress = (address || profile?.shipping_address || '').trim();
+                            if (cleanPhone.length >= 10 && currentAddress.length >= 6) {
+                              setStep('payment');
+                            } else {
+                              setStep('address');
+                            }
+                          } catch (err: unknown) {
+                            setAuthError(err instanceof Error ? err.message : 'Google sign-in encountered an error.');
+                          } finally {
+                            setIsAuthenticating(false);
+                          }
+                        }}
+                        onError={() => {
+                          setAuthError('Google Sign-In was cancelled or failed.');
+                        }}
+                        theme="outline"
+                        shape="pill"
+                        size="large"
+                        text="continue_with"
+                        width="100%"
+                      />
+                    </div>
+
+                    {isAuthenticating && (
+                      <div className="flex items-center justify-center gap-2 py-2 text-xs font-bold text-accent">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+                        <span>Verifying Google account...</span>
+                      </div>
+                    )}
 
                     {/* Return to Bag CTA */}
                     <button

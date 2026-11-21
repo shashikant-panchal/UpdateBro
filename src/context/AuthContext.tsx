@@ -13,6 +13,7 @@ interface AuthContextValue {
   openAuthModal: () => void;
   closeAuthModal: () => void;
   signInWithGoogle: () => Promise<void>;
+  signInWithGoogleIdToken: (credential: string) => Promise<{ data: any; error: any }>;
   signInWithOtp: (phone: string) => Promise<{ error: Error | null }>;
   verifyOtp: (phone: string, token: string) => Promise<{ error: Error | null }>;
   updatePhone: (phone: string) => Promise<{ error: Error | null }>;
@@ -153,6 +154,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) throw error;
   };
 
+  const signInWithGoogleIdToken = async (credential: string) => {
+    if (!isSupabaseConfigured) {
+      return { data: null, error: new Error('Supabase is not configured yet.') };
+    }
+    const res = await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token: credential,
+    });
+    if (res.data?.session) {
+      setSession(res.data.session);
+      setUser(res.data.session.user);
+      await fetchProfile(res.data.session.user.id, res.data.session.user);
+    }
+    return res;
+  };
+
   const signInWithOtp = async (phone: string) => {
     if (!isSupabaseConfigured) {
       return { error: new Error('Supabase is not configured yet.') };
@@ -240,6 +257,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         openAuthModal,
         closeAuthModal,
         signInWithGoogle,
+        signInWithGoogleIdToken,
         signInWithOtp,
         verifyOtp,
         updatePhone,
