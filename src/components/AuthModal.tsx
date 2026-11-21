@@ -9,8 +9,7 @@ import {
   Package,
   Zap,
 } from 'lucide-react';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
-import { supabase } from '../lib/supabase';
+import { GoogleAuthButton } from './GoogleAuthButton';
 import { useAuth } from '../context/AuthContext';
 import { BrandLogo } from './BrandLogo';
 
@@ -165,40 +164,18 @@ export const AuthModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Direct Frontend Google Sign-In with ID Token (Domain Stays On www.updatebro.in) */}
+              {/* Google Sign-In with Theme Support & Instant Fallback */}
               <div className="flex justify-center w-full py-1">
-                <GoogleLogin
-                  onSuccess={async (credentialResponse: CredentialResponse) => {
-                    if (!credentialResponse.credential) {
-                      setErrorMsg('Google sign-in did not return a valid credential token.');
-                      return;
-                    }
-                    try {
-                      setIsSubmitting(true);
-                      setErrorMsg(null);
-                      const { error } = await supabase.auth.signInWithIdToken({
-                        provider: 'google',
-                        token: credentialResponse.credential,
-                      });
-                      if (error) throw error;
-                      setSuccessMsg('Signed in successfully!');
-                      setTimeout(() => {
-                        closeAuthModal();
-                      }, 500);
-                    } catch (err: unknown) {
-                      setErrorMsg(err instanceof Error ? err.message : 'Google authentication failed.');
-                    } finally {
-                      setIsSubmitting(false);
-                    }
+                <GoogleAuthButton
+                  onSuccess={() => {
+                    setSuccessMsg('Signed in successfully!');
+                    setTimeout(() => {
+                      closeAuthModal();
+                    }, 500);
                   }}
-                  onError={() => {
-                    setErrorMsg('Google sign-in was cancelled or encountered an error.');
-                  }}
-                  theme="outline"
-                  shape="pill"
-                  size="large"
+                  onError={(err) => setErrorMsg(err)}
+                  onLoadingChange={setIsSubmitting}
                   text="continue_with"
-                  width="100%"
                 />
               </div>
 

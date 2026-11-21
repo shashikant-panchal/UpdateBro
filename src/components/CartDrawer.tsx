@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { GoogleAuthButton } from './GoogleAuthButton';
 import {
   ArrowLeft,
   ArrowRight,
@@ -495,19 +495,18 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
   return (
     <AnimatePresence>
       {isCartOpen && (
-        <div
-          key="cart-drawer-root"
-          className="fixed inset-0 z-50 flex justify-end pointer-events-none"
+        <motion.div
+          key="cart-drawer-overlay-root"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className={`fixed inset-0 z-50 ${isCartOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}
         >
-          {/* Backdrop with dedicated fade exit */}
-          <motion.div
-            key="cart-drawer-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
+          {/* Backdrop with click-to-close */}
+          <div
             onClick={handleClose}
-            className="pointer-events-auto absolute inset-0 bg-black/50 backdrop-blur-sm cursor-pointer"
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm cursor-pointer"
             aria-hidden="true"
           />
 
@@ -518,7 +517,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 350, damping: 32 }}
-            className="pointer-events-auto relative z-10 flex h-full w-full max-w-md flex-col border-l border-line bg-canvas shadow-2xl"
+            className="absolute right-0 top-0 bottom-0 z-10 flex h-full w-full max-w-md flex-col border-l border-line bg-canvas shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-line bg-surface px-5 py-4">
@@ -577,11 +576,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                   )}
                 </div>
                 <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-surface">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${freeShippingProgress}%` }}
-                    transition={{ type: 'spring', stiffness: 200, damping: 24 }}
-                    className="h-full rounded-full bg-accent"
+                  <div
+                    className="h-full rounded-full bg-accent transition-all duration-300 ease-out"
+                    style={{ width: `${freeShippingProgress}%` }}
                   />
                 </div>
               </div>
@@ -643,10 +640,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                   ) : (
                     <div className="space-y-3">
                       {items.map((item) => (
-                        <motion.div
-                          layout
+                        <div
                           key={item.key}
-                          className="flex items-center gap-3.5 rounded-card border border-line bg-surface p-3 shadow-sm"
+                          className="flex items-center gap-3.5 rounded-card border border-line bg-surface p-3 shadow-sm transition"
                         >
                           <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-cloud">
                             <ProductArt
@@ -706,7 +702,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                               </div>
                             </div>
                           </div>
-                        </motion.div>
+                        </div>
                       ))}
 
                       {/* Coupon Section */}
@@ -790,51 +786,28 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                   )}
 
                   <div className="mt-8 w-full space-y-3">
-                    {/* Direct Frontend Google Sign-In with ID Token (Domain Stays On www.updatebro.in) */}
+                    {/* Google Sign-In with Theme Support & Instant Fallback */}
                     <div className="flex justify-center w-full py-1">
-                      <GoogleLogin
-                        onSuccess={async (credentialResponse: CredentialResponse) => {
-                          if (!credentialResponse.credential) {
-                            setAuthError('Google sign-in did not return a valid credential token.');
-                            return;
-                          }
-                          try {
-                            setIsAuthenticating(true);
-                            setAuthError(null);
-                            const { error } = await supabase.auth.signInWithIdToken({
-                              provider: 'google',
-                              token: credentialResponse.credential,
-                            });
-                            if (error) throw error;
-                            // Check profile details and advance seamlessly
-                            const cleanPhone = (phone || profile?.phone || '').replace(/\D/g, '');
-                            const currentAddress = (address || profile?.shipping_address || '').trim();
-                            if (cleanPhone.length >= 10 && currentAddress.length >= 6) {
-                              setStep('payment');
-                            } else {
-                              setStep('address');
-                            }
-                          } catch (err: unknown) {
-                            setAuthError(err instanceof Error ? err.message : 'Google sign-in encountered an error.');
-                          } finally {
-                            setIsAuthenticating(false);
+                      <GoogleAuthButton
+                        onSuccess={() => {
+                          const cleanPhone = (phone || profile?.phone || '').replace(/\D/g, '');
+                          const currentAddress = (address || profile?.shipping_address || '').trim();
+                          if (cleanPhone.length >= 10 && currentAddress.length >= 6) {
+                            setStep('payment');
+                          } else {
+                            setStep('address');
                           }
                         }}
-                        onError={() => {
-                          setAuthError('Google Sign-In was cancelled or failed.');
-                        }}
-                        theme="outline"
-                        shape="pill"
-                        size="large"
+                        onError={(err) => setAuthError(err)}
+                        onLoadingChange={setIsAuthenticating}
                         text="continue_with"
-                        width="100%"
                       />
                     </div>
 
                     {isAuthenticating && (
-                      <div className="flex items-center justify-center gap-2 py-2 text-xs font-bold text-accent">
+                      <div className="flex items-center justify-center gap-2 py-1 text-xs font-bold text-accent">
                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                        <span>Verifying Google account...</span>
+                        <span>Verifying account...</span>
                       </div>
                     )}
 
@@ -1124,14 +1097,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
               {/* STEP 5: ORDER CONFIRMED */}
               {step === 'confirmed' && placedOrder && (
                 <div className="flex flex-col items-center py-6 text-center">
-                  <motion.div
-                    initial={{ scale: 0.6, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ type: 'spring', stiffness: 320, damping: 20 }}
-                    className="flex h-16 w-16 items-center justify-center rounded-full bg-accent text-accent-ink shadow-glow"
-                  >
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent text-accent-ink shadow-glow animate-in zoom-in-75 duration-300">
                     <CheckCircle2 className="h-9 w-9" />
-                  </motion.div>
+                  </div>
                   <h3 className="mt-4 font-display text-2xl font-bold text-ink">
                     Order Confirmed!
                   </h3>
@@ -1334,7 +1302,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
               </div>
             )}
           </motion.aside>
-        </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { GoogleAuthButton } from './GoogleAuthButton';
 import {
   User,
   Mail,
@@ -246,29 +246,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
           </p>
 
           <div className="mt-6 space-y-3">
-            {/* Direct Frontend Google Sign-In with ID Token (Domain Stays On www.updatebro.in) */}
+            {/* Google Sign-In with Theme Support & Instant Fallback */}
             <div className="flex justify-center w-full py-1">
-              <GoogleLogin
-                onSuccess={async (credentialResponse: CredentialResponse) => {
-                  if (!credentialResponse.credential) return;
-                  try {
-                    await supabase.auth.signInWithIdToken({
-                      provider: 'google',
-                      token: credentialResponse.credential,
-                    });
-                  } catch (err) {
-                    console.error('Google profile sign-in failed:', err);
-                  }
-                }}
-                onError={() => {
-                  console.warn('Google sign-in was cancelled.');
-                }}
-                theme="outline"
-                shape="pill"
-                size="large"
-                text="continue_with"
-                width="100%"
-              />
+              <GoogleAuthButton text="continue_with" />
             </div>
 
             <button
