@@ -74,7 +74,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<'ONLINE' | 'COD'>('ONLINE');
+  const [paymentMethod, setPaymentMethod] = useState<'ONLINE' | 'COD'>('COD');
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [placedOrder, setPlacedOrder] = useState<OrderRecord | null>(null);
@@ -1000,94 +1000,73 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                     Select Payment Method:
                   </p>
 
-                  {/* OPTION 1: ONLINE PAYMENT VIA RAZORPAY */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPaymentMethod('ONLINE');
-                      setPaymentError(null);
-                    }}
-                    className={`w-full text-left rounded-2xl border-2 p-4 shadow-sm transition ${
-                      paymentMethod === 'ONLINE'
-                        ? 'border-accent bg-accent/10 shadow-glow'
-                        : 'border-line bg-surface hover:border-line-hover'
-                    }`}
+                  {/* OPTION 1: ONLINE PAYMENT (TEMPORARILY INACTIVE UNTIL REAL RAZORPAY KEYS ADDED) */}
+                  <div
+                    className="w-full text-left rounded-2xl border border-line bg-surface/50 p-4 shadow-sm opacity-50 cursor-not-allowed transition select-none"
+                    aria-disabled="true"
                   >
                     <div className="flex items-start gap-3">
-                      <div
-                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full mt-0.5 transition ${
-                          paymentMethod === 'ONLINE'
-                            ? 'bg-accent text-white'
-                            : 'border border-line bg-cloud text-transparent'
-                        }`}
-                      >
-                        <Check className="h-3.5 w-3.5 stroke-[3]" />
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full mt-0.5 border border-line bg-cloud text-muted">
+                        <Lock className="h-3 w-3" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="text-xs font-bold text-ink">
+                          <span className="text-xs font-bold text-muted">
                             UPI / NetBanking / Cards
                           </span>
-                          <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[9px] font-extrabold text-accent uppercase tracking-wider">
-                            Fastest Dispatch
+                          <span className="rounded-full bg-cloud border border-line px-2 py-0.5 text-[9px] font-bold text-muted uppercase tracking-wider">
+                            Temporarily Inactive
                           </span>
                         </div>
                         <p className="mt-1 text-[11px] text-muted leading-relaxed">
-                          Pay instantly via Google Pay, PhonePe, Paytm, UPI, Visa, Mastercard, RuPay &amp; NetBanking.
+                          Online payment is currently inactive while we configure production gateway keys. Please use Cash on Delivery (COD) below.
                         </p>
 
-                        <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
-                          <span className="inline-flex items-center gap-1 rounded-md border border-line bg-cloud px-1.5 py-0.5 font-mono text-[10px] font-bold text-ink">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                        <div className="mt-2.5 flex items-center gap-1.5 flex-wrap opacity-60">
+                          <span className="inline-flex items-center gap-1 rounded-md border border-line bg-cloud px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted">
                             UPI
                           </span>
-                          <span className="inline-flex items-center rounded-md border border-line bg-cloud px-1.5 py-0.5 text-[10px] font-bold text-ink">
+                          <span className="inline-flex items-center rounded-md border border-line bg-cloud px-1.5 py-0.5 text-[10px] font-medium text-muted">
                             GPay / PhonePe
                           </span>
-                          <span className="inline-flex items-center rounded-md border border-line bg-cloud px-1.5 py-0.5 text-[10px] font-bold text-ink">
-                            Debit &amp; Credit Cards
-                          </span>
-                          <span className="inline-flex items-center gap-1 rounded-md border border-line bg-cloud px-1.5 py-0.5 text-[9px] font-mono font-semibold text-muted">
-                            <Lock className="h-2.5 w-2.5" /> Razorpay Secured
+                          <span className="inline-flex items-center rounded-md border border-line bg-cloud px-1.5 py-0.5 text-[10px] font-medium text-muted">
+                            Cards &amp; NetBanking
                           </span>
                         </div>
                       </div>
                     </div>
-                  </button>
+                  </div>
 
-                  {/* OPTION 2: CASH ON DELIVERY (COD) */}
+                  {/* OPTION 2: CASH ON DELIVERY (COD - ACTIVE & SELECTED) */}
                   <button
                     type="button"
                     onClick={() => {
                       setPaymentMethod('COD');
                       setPaymentError(null);
                     }}
-                    className={`w-full text-left rounded-2xl border-2 p-4 shadow-sm transition ${
-                      paymentMethod === 'COD'
-                        ? 'border-accent bg-accent/10 shadow-glow'
-                        : 'border-line bg-surface hover:border-line-hover'
-                    }`}
+                    className="w-full text-left rounded-2xl border-2 border-accent bg-accent/10 shadow-glow p-4 transition cursor-pointer"
                   >
                     <div className="flex items-start gap-3">
-                      <div
-                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full mt-0.5 transition ${
-                          paymentMethod === 'COD'
-                            ? 'bg-accent text-white'
-                            : 'border border-line bg-cloud text-transparent'
-                        }`}
-                      >
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full mt-0.5 bg-accent text-white transition">
                         <Check className="h-3.5 w-3.5 stroke-[3]" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="text-xs font-bold text-ink">Cash on Delivery (COD)</span>
-                          <span className="rounded-full bg-cloud px-2 py-0.5 text-[9px] font-bold text-muted uppercase tracking-wider border border-line">
-                            Zero Extra Fee
+                          <span className="text-xs font-bold text-ink">
+                            Cash on Delivery (COD)
+                          </span>
+                          <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                            Recommended
                           </span>
                         </div>
                         <p className="mt-1 text-[11px] text-muted leading-relaxed">
-                          Pay comfortably with cash or UPI QR scan upon courier package delivery at your doorstep.
+                          Pay cash or UPI directly to delivery agent upon receiving your package at your doorstep.
                         </p>
+                        <div className="mt-2 flex items-center gap-2 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                          <span>✓ Verified Delivery</span>
+                          <span>•</span>
+                          <span>✓ Zero Upfront Payment</span>
+                        </div>
                       </div>
                     </div>
                   </button>
