@@ -23,8 +23,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const DEFAULT_KEY_ID = 'rzp_test_U2XNwxcF1QgnvE';
-  const DEFAULT_KEY_SECRET = '2x5SoL3QUYbCPjWwWKXfJ4Fw';
+  const DEFAULT_KEY_ID = 'rzp_live_U2o5Dfytop3zVB';
+  const DEFAULT_KEY_SECRET = 'Y9NNTp1ontPAHkz3Hs7BiTJn';
 
   const key_id =
     process.env.RAZORPAY_KEY_ID ||

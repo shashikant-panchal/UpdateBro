@@ -163,7 +163,7 @@ export async function launchRazorpayModal({
 
   const key =
     import.meta.env.VITE_RAZORPAY_KEY_ID ||
-    'rzp_test_U2XNwxcF1QgnvE';
+    'rzp_live_U2o5Dfytop3zVB';
 
   const cleanPhone = (customerPhone || '').replace(/\D/g, '').slice(-10);
 
