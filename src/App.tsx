@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AnimatePresence, MotionConfig } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
+import { CartProvider, useCart } from './context/CartContext';
 import { useMotionConfig } from './hooks/useMotionConfig';
 import { useLenis } from './hooks/useLenis';
 import type { CategoryId, Product } from './types';
@@ -39,6 +39,7 @@ const StorefrontShell: React.FC = () => {
 
   // Dynamic Storefront Sync
   const { storeSettings } = useStorefront();
+  const { setIsCartOpen } = useCart();
 
   // Route State derived from URL (Supports /privacy-policy, /terms-of-service, /orders, /profile, /category)
   const [activeView, setActiveView] = useState<AppView>(() => {
@@ -94,11 +95,18 @@ const StorefrontShell: React.FC = () => {
       } else {
         setActiveView('home');
       }
+      setQuickViewProduct(null);
+      setInfoTopic(null);
+      setIsPersonalizationOpen(false);
+      setIsCartOpen(false);
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = '';
+      }
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [setIsCartOpen]);
 
   const navigateTo = (view: AppView, cat?: CategoryId) => {
     setActiveView(view);
@@ -127,15 +135,21 @@ const StorefrontShell: React.FC = () => {
     navigateTo('home');
   };
 
+  const handleIntroFinished = React.useCallback(() => {
+    setShowIntro(false);
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = '';
+    }
+  }, []);
+
   return (
     <MotionConfig reducedMotion={isReduced ? 'always' : 'user'}>
       {/* 2-Second Brand Intro Animation (Plays each time website reloads) */}
       <AnimatePresence>
         {showIntro && (
           <IntroVideo
-            onFinished={() => {
-              setShowIntro(false);
-            }}
+            key="ub-intro-video"
+            onFinished={handleIntroFinished}
           />
         )}
       </AnimatePresence>

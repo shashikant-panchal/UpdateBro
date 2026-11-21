@@ -61,13 +61,13 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
       {product && (() => {
         const activeColor = product.colors[colorIdx] ?? product.colors[0];
         return (
-          <div key={product.id} className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div key={product.id} className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={onClose}
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              className="pointer-events-auto absolute inset-0 bg-black/50 backdrop-blur-sm cursor-pointer"
             />
 
             <motion.div
@@ -78,7 +78,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
               role="dialog"
               aria-modal="true"
               aria-label={product.name}
-              className="relative z-10 grid max-h-[90vh] w-full max-w-4xl grid-cols-1 overflow-y-auto rounded-card border border-line bg-surface shadow-2xl md:grid-cols-12"
+              className="pointer-events-auto relative z-10 grid max-h-[90vh] w-full max-w-4xl grid-cols-1 overflow-y-auto rounded-card border border-line bg-surface shadow-2xl md:grid-cols-12"
             >
               {/* Close Button */}
               <button

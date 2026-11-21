@@ -163,33 +163,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
     }
   }, [user, step, profile, phone, address]);
 
-  // Resume checkout flow seamlessly after Google OAuth redirect
-  useEffect(() => {
-    try {
-      const isPending = sessionStorage.getItem('ub_pending_checkout');
-      if (isPending === 'true' && user) {
-        sessionStorage.removeItem('ub_pending_checkout');
-        const savedName = sessionStorage.getItem('ub_pending_name');
-        const savedPhone = sessionStorage.getItem('ub_pending_phone');
-        const savedAddress = sessionStorage.getItem('ub_pending_address');
-        const savedCity = sessionStorage.getItem('ub_pending_city');
-        const savedPincode = sessionStorage.getItem('ub_pending_pincode');
-
-        if (savedName) setCustomerName(savedName);
-        if (savedPhone) setPhone(savedPhone);
-        if (savedAddress) setAddress(savedAddress);
-        if (savedCity) setCity(savedCity);
-        if (savedPincode) setPincode(savedPincode);
-
-        // Open cart drawer and proceed directly to address step
-        setIsCartOpen(true);
-        setStep('address');
-      }
-    } catch {
-      // Ignore session storage errors
-    }
-  }, [user, setIsCartOpen]);
-
   // Ensure cart view is fresh and ready if opened after previous order
   useEffect(() => {
     if (isCartOpen && items.length > 0 && step === 'confirmed') {
@@ -202,7 +175,33 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
     setIsCartOpen(false);
     setPlacedOrder(null);
     setStep('bag');
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   };
+
+  // Synchronize cart drawer navigation with browser Back button (popstate)
+  useEffect(() => {
+    if (!isCartOpen) return;
+
+    // Push a shallow history state so native Back button handles drawer steps
+    window.history.pushState({ ubCartOpen: true, step }, '', window.location.href);
+
+    const handlePopState = () => {
+      if (step !== 'bag' && step !== 'confirmed') {
+        // Step back to bag if currently on auth, address, or payment
+        setStep('bag');
+      } else {
+        // Close drawer cleanly if on bag or confirmed
+        handleClose();
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isCartOpen, step]);
 
   // Lock body scroll and listen for Escape key when cart is open
   useEffect(() => {
@@ -516,27 +515,30 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
   return (
     <AnimatePresence>
       {isCartOpen && (
-        <motion.div
+        <div
           key="cart-drawer-root"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex justify-end"
+          className="fixed inset-0 z-50 flex justify-end pointer-events-none"
         >
-          <div
+          {/* Backdrop with dedicated fade exit */}
+          <motion.div
+            key="cart-drawer-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
             onClick={handleClose}
-            className="absolute inset-0 bg-black/45 backdrop-blur-sm cursor-pointer"
+            className="pointer-events-auto absolute inset-0 bg-black/50 backdrop-blur-sm cursor-pointer"
             aria-hidden="true"
           />
 
+          {/* Drawer Panel with spring physics */}
           <motion.aside
             key="cart-drawer-panel"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 340, damping: 32 }}
-            className="relative z-10 flex h-full w-full max-w-md flex-col border-l border-line bg-canvas shadow-2xl"
+            transition={{ type: 'spring', stiffness: 350, damping: 32 }}
+            className="pointer-events-auto relative z-10 flex h-full w-full max-w-md flex-col border-l border-line bg-canvas shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-line bg-surface px-5 py-4">
@@ -837,6 +839,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                       <span className="text-sm">
                         {isAuthenticating ? 'Redirecting to Google...' : 'Continue with Google'}
                       </span>
+                    </button>
+
+                    {/* Return to Bag CTA */}
+                    <button
+                      type="button"
+                      onClick={() => setStep('bag')}
+                      className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-line bg-cloud/50 py-2.5 text-xs font-bold text-muted transition hover:bg-cloud hover:text-ink"
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5" />
+                      <span>Back to Shopping Bag</span>
                     </button>
 
                     <div className="pt-2 text-center space-y-1">
@@ -1237,11 +1249,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                   <span>Proceed to Checkout</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
+
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="mt-2 flex w-full items-center justify-center gap-1.5 py-1 text-center text-xs font-bold text-muted transition hover:text-ink"
+                >
+                  <span>← Continue Shopping</span>
+                </button>
               </div>
             )}
 
             {step === 'address' && (
-              <div className="border-t border-line bg-surface p-5">
+              <div className="border-t border-line bg-surface p-5 space-y-2">
                 <button
                   type="submit"
                   form="address-form"
@@ -1250,6 +1270,15 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                 >
                   <span>{isSavingAddress ? 'Saving Details...' : 'Save & Continue to Payment'}</span>
                   <ArrowRight className="h-4 w-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setStep('bag')}
+                  className="flex h-10 w-full items-center justify-center gap-1.5 rounded-xl border border-line text-xs font-bold text-muted transition hover:bg-cloud hover:text-ink"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Back to Shopping Bag</span>
                 </button>
               </div>
             )}
@@ -1279,6 +1308,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                     </>
                   )}
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setStep('address')}
+                  className="flex h-10 w-full items-center justify-center gap-1.5 rounded-xl border border-line text-xs font-bold text-muted transition hover:bg-cloud hover:text-ink"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Back to Delivery Details</span>
+                </button>
+
                 <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted text-center pt-0.5">
                   <ShieldCheck className="h-3 w-3 text-emerald-500" />
                   <span>100% Safe &amp; Secure Checkout • Instant Dispatch Updates</span>
@@ -1298,7 +1337,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
               </div>
             )}
           </motion.aside>
-        </motion.div>
+        </div>
       )}
     </AnimatePresence>
   );

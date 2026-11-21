@@ -63,14 +63,14 @@ export const PersonalizationModal: React.FC<PersonalizationModalProps> = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center pointer-events-none">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="pointer-events-auto absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
           />
 
           {/* Bottom Sheet / Modal */}
@@ -79,7 +79,7 @@ export const PersonalizationModal: React.FC<PersonalizationModalProps> = ({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-            className="relative z-10 flex max-h-[85vh] w-full max-w-md flex-col rounded-t-[28px] border border-line bg-surface shadow-2xl sm:rounded-3xl"
+            className="pointer-events-auto relative z-10 flex max-h-[85vh] w-full max-w-md flex-col rounded-t-[28px] border border-line bg-surface shadow-2xl sm:rounded-3xl"
           >
             {/* Grab Handle for Mobile */}
             <div className="flex w-full justify-center pt-3 sm:hidden">

@@ -39,6 +39,18 @@ export const AuthModal: React.FC = () => {
     }
   }, [isAuthModalOpen, needsPhoneLink, user]);
 
+  React.useEffect(() => {
+    if (!isAuthModalOpen) {
+      document.body.style.overflow = '';
+      return;
+    }
+    const orig = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = orig || '';
+    };
+  }, [isAuthModalOpen]);
+
   if (!isAuthModalOpen) return null;
 
   const handleGoogleLogin = async () => {

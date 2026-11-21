@@ -506,20 +506,20 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Slide-Over Drawer */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end lg:hidden">
+          <div className="fixed inset-0 z-50 flex justify-end lg:hidden pointer-events-none">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="pointer-events-auto absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
             />
             <motion.aside
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 350, damping: 32 }}
-              className="relative z-10 flex h-full w-full max-w-xs flex-col border-l border-line bg-canvas shadow-2xl"
+              className="pointer-events-auto relative z-10 flex h-full w-full max-w-xs flex-col border-l border-line bg-canvas shadow-2xl"
             >
               {/* Header */}
               <div className="flex items-center justify-between border-b border-line bg-surface px-5 py-4">

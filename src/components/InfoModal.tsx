@@ -95,19 +95,19 @@ export const InfoModal: React.FC<InfoModalProps> = ({ topic, onClose }) => {
   return (
     <AnimatePresence>
       {info && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="pointer-events-auto absolute inset-0 bg-black/50 backdrop-blur-sm cursor-pointer"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.94, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 10 }}
-            className="relative z-10 w-full max-w-lg rounded-card border border-line bg-surface p-6 shadow-2xl"
+            className="pointer-events-auto relative z-10 w-full max-w-lg rounded-card border border-line bg-surface p-6 shadow-2xl"
           >
             <div className="flex items-start justify-between gap-4 border-b border-line pb-3">
               <div className="flex items-center gap-2.5">

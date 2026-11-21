@@ -117,6 +117,20 @@ export async function verifyRazorpayPayment(
   return data as RazorpayVerificationResult;
 }
 
+/**
+ * Cleans up any stray Razorpay modal DOM elements and restores page scrolling.
+ */
+export function cleanupRazorpayDOMElements() {
+  if (typeof document === 'undefined') return;
+  try {
+    const strayContainers = document.querySelectorAll('.razorpay-container, .razorpay-backdrop');
+    strayContainers.forEach((el) => el.remove());
+    document.body.style.overflow = '';
+  } catch (err) {
+    console.warn('Error cleaning up Razorpay elements:', err);
+  }
+}
+
 export interface LaunchCheckoutOptions {
   orderData: RazorpayCreateOrderResponse;
   customerName: string;
@@ -170,12 +184,14 @@ export async function launchRazorpayModal({
     },
     modal: {
       ondismiss: () => {
+        cleanupRazorpayDOMElements();
         if (onDismiss) onDismiss();
       },
       escape: true,
       backdropclose: false,
     },
     handler: (response: RazorpaySuccessPayload) => {
+      cleanupRazorpayDOMElements();
       onSuccess(response);
     },
   };
@@ -184,12 +200,14 @@ export async function launchRazorpayModal({
     const rzp = new window.Razorpay(options);
 
     rzp.on('payment.failed', (response: any) => {
+      cleanupRazorpayDOMElements();
       const reason = response.error?.description || response.error?.reason || 'Payment failed';
       onError(`Payment could not be completed: ${reason}`);
     });
 
     rzp.open();
   } catch (err: any) {
+    cleanupRazorpayDOMElements();
     console.error('Error opening Razorpay modal:', err);
     onError(err.message || 'Failed to open Razorpay payment window');
   }

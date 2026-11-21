@@ -9,7 +9,6 @@ interface IntroVideoProps {
 export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
   useEffect(() => {
     // Disable background body scrolling while intro is active
-    const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     // Show for exactly 2.0 seconds, then seamlessly reveal storefront
@@ -18,16 +17,22 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onFinished }) => {
     }, 2000);
 
     return () => {
-      document.body.style.overflow = originalOverflow;
+      document.body.style.overflow = '';
       clearTimeout(timer);
     };
   }, [onFinished]);
 
   return (
     <motion.div
+      key="ub-intro-splash"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 1.05 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      onAnimationComplete={() => {
+        if (typeof document !== 'undefined') {
+          document.body.style.overflow = '';
+        }
+      }}
       onClick={onFinished}
       role="banner"
       aria-label="UPDATE BRO Intro"
