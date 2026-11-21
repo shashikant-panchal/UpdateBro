@@ -23,8 +23,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const key_id = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID;
-  const key_secret = process.env.RAZORPAY_KEY_SECRET;
+  const DEFAULT_KEY_ID = 'rzp_test_U2XNwxcF1QgnvE';
+  const DEFAULT_KEY_SECRET = '2x5SoL3QUYbCPjWwWKXfJ4Fw';
+
+  const key_id =
+    process.env.RAZORPAY_KEY_ID ||
+    process.env.VITE_RAZORPAY_KEY_ID ||
+    DEFAULT_KEY_ID;
+  const key_secret =
+    process.env.RAZORPAY_KEY_SECRET ||
+    DEFAULT_KEY_SECRET;
 
   if (!key_id || !key_secret) {
     console.error('Razorpay credentials missing from server environment');
