@@ -11,6 +11,9 @@ interface GoogleAuthButtonProps {
   className?: string;
 }
 
+const DEFAULT_GOOGLE_CLIENT_ID =
+  '557708693889-dbab359762a0arbm38gn23h5cemaojrm.apps.googleusercontent.com';
+
 export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
   onSuccess,
   onError,
@@ -24,8 +27,8 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
 
   const isDark = resolvedTheme === 'dark';
 
-  // Read environment variable for Google Client ID
-  const rawClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  // Read environment variable for Google Client ID (with production fallback)
+  const rawClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || DEFAULT_GOOGLE_CLIENT_ID;
   const clientId = typeof rawClientId === 'string' ? rawClientId.trim() : '';
 
   // Valid Google Client ID must be configured (typically ends with .apps.googleusercontent.com)
