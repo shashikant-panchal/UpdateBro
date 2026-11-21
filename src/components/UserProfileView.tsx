@@ -82,20 +82,33 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
     }
   }, [profile, user]);
 
-  // Load orders for authenticated user
+  // Load orders strictly for this authenticated user
   const fetchUserOrders = async () => {
     if (!user || !isSupabaseConfigured) return;
     try {
       setIsLoadingOrders(true);
-      const { data, error } = await supabase
+
+      const cleanPhone = (profile?.phone || phone || '').replace(/\D/g, '');
+      let query = supabase
         .from('orders')
         .select(`
           id, order_number, user_id, customer_name, customer_phone,
-          shipping_address, payment_method, subtotal, shipping_fee,
-          total_amount, status, status_history, tracking_note, created_at, updated_at,
+          shipping_address, payment_method, payment_status, razorpay_payment_id,
+          subtotal, shipping_fee, total_amount, status, status_history, tracking_note,
+          created_at, updated_at,
           order_items ( id, product_name, product_image, quantity, unit_price )
         `)
         .order('created_at', { ascending: false });
+
+      // Strictly restrict query to current authenticated customer
+      if (cleanPhone.length >= 10) {
+        const phone10 = cleanPhone.slice(-10);
+        query = query.or(`user_id.eq.${user.id},customer_phone.ilike.%${phone10}%`);
+      } else {
+        query = query.eq('user_id', user.id);
+      }
+
+      const { data, error } = await query;
 
       if (!error && data) {
         setOrders(data as OrderWithItems[]);
@@ -111,7 +124,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
     if (user) {
       fetchUserOrders();
     }
-  }, [user]);
+  }, [user, profile?.phone]);
 
   // Realtime subscription for orders
   useEffect(() => {
@@ -271,11 +284,6 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
     );
   }
 
-  const avatarUrl =
-    user.user_metadata?.avatar_url ||
-    user.user_metadata?.picture ||
-    null;
-
   return (
     <div className="min-h-screen bg-canvas text-ink pb-20">
       <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-6 lg:px-8">
@@ -303,31 +311,17 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
         {/* User Identity Header Card */}
         <div className="relative overflow-hidden rounded-3xl border border-line bg-surface p-6 sm:p-8 shadow-sm">
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              {avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt={fullName || 'Avatar'}
-                  className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl object-cover border-2 border-accent/40 shadow-glow"
-                />
-              ) : (
-                <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl border border-accent/30 bg-accent/15 text-accent text-2xl font-black shadow-glow">
-                  {fullName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'}
-                </div>
-              )}
-
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="font-display text-xl sm:text-2xl font-black text-ink">
-                    {fullName || 'UpdateBro Member'}
-                  </h1>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[10px] font-bold text-accent">
-                    <ShieldCheck className="h-3 w-3" /> Flagship Member
-                  </span>
-                </div>
-                <p className="mt-1 text-xs text-muted font-mono">{user.email}</p>
-                {phone && <p className="text-xs text-muted font-mono">{phone}</p>}
+            <div>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h1 className="font-display text-xl sm:text-2xl font-black text-ink">
+                  {fullName || 'UpdateBro Member'}
+                </h1>
+                <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[10px] font-bold text-accent">
+                  <ShieldCheck className="h-3 w-3" /> Flagship Member
+                </span>
               </div>
+              <p className="mt-1.5 text-xs text-muted font-mono">{user.email}</p>
+              {phone && <p className="mt-0.5 text-xs text-muted font-mono">{phone}</p>}
             </div>
 
             {/* Quick stats */}
@@ -558,8 +552,12 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
 
                     <div className="text-left sm:text-right">
                       <p className="text-lg font-black text-ink">₹{activeOrder.total_amount}</p>
-                      <p className="text-[11px] font-bold text-emerald-500">
-                        Payment: {activeOrder.payment_method === 'COD' ? 'Cash on Delivery (COD)' : activeOrder.payment_method}
+                      <p className={`text-[11px] font-bold ${
+                        activeOrder.payment_method === 'ONLINE' ? 'text-emerald-500' : 'text-amber-500'
+                      }`}>
+                        {activeOrder.payment_method === 'ONLINE'
+                          ? `Paid Online (Razorpay${activeOrder.razorpay_payment_id ? ` • ${activeOrder.razorpay_payment_id}` : ''})`
+                          : 'Cash on Delivery (COD)'}
                       </p>
                     </div>
                   </div>
@@ -677,8 +675,15 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 border-line pt-2.5 sm:pt-0">
-                        <p className="font-black text-sm text-ink">₹{ord.total_amount}</p>
+                      <div className="flex items-center justify-between sm:justify-end gap-3 border-t sm:border-t-0 border-line pt-2.5 sm:pt-0">
+                        <div className="text-right">
+                          <p className="font-black text-sm text-ink">₹{ord.total_amount}</p>
+                          <span className={`inline-block text-[10px] font-bold ${
+                            ord.payment_method === 'ONLINE' ? 'text-emerald-500' : 'text-amber-500'
+                          }`}>
+                            {ord.payment_method === 'ONLINE' ? 'Paid Online' : 'Cash on Delivery'}
+                          </span>
+                        </div>
                         <ChevronRight className="h-4 w-4 text-muted" />
                       </div>
                     </motion.div>

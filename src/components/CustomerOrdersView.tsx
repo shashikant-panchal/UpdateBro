@@ -55,15 +55,27 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
 
     try {
       setIsLoading(true);
-      const { data: ordersData, error: ordersErr } = await supabase
+
+      const cleanPhone = (profile?.phone || '').replace(/\D/g, '');
+      let query = supabase
         .from('orders')
         .select(`
           id, order_number, user_id, customer_name, customer_phone,
-          shipping_address, payment_method, subtotal, shipping_fee,
-          total_amount, status, status_history, tracking_note, created_at, updated_at,
+          shipping_address, payment_method, payment_status, razorpay_payment_id,
+          subtotal, shipping_fee, total_amount, status, status_history, tracking_note,
+          created_at, updated_at,
           order_items ( id, product_name, product_image, quantity, unit_price )
         `)
         .order('created_at', { ascending: false });
+
+      if (cleanPhone.length >= 10) {
+        const phone10 = cleanPhone.slice(-10);
+        query = query.or(`user_id.eq.${user.id},customer_phone.ilike.%${phone10}%`);
+      } else {
+        query = query.eq('user_id', user.id);
+      }
+
+      const { data: ordersData, error: ordersErr } = await query;
 
       if (!ordersErr && ordersData) {
         const mapped = ordersData as OrderWithItems[];

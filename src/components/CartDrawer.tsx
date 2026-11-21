@@ -17,7 +17,14 @@ import {
   Lock,
   AlertCircle,
   Check,
+  CreditCard,
+  ShieldCheck,
 } from 'lucide-react';
+import {
+  createRazorpayOrder,
+  launchRazorpayModal,
+  verifyRazorpayPayment,
+} from '../lib/razorpay';
 import {
   FREE_SHIPPING_THRESHOLD,
   useCart,
@@ -66,7 +73,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
-  const paymentMethod = 'Cash on Delivery (COD)';
+  const [paymentMethod, setPaymentMethod] = useState<'ONLINE' | 'COD'>('ONLINE');
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const [placedOrder, setPlacedOrder] = useState<OrderRecord | null>(null);
 
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -334,9 +343,124 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
       : `${address.trim()}, ${finalCity} - ${pincode.trim() || '500001'}`;
     const orderNumber = `UB-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    // Sync to Supabase in background / real-time
-    if (isSupabaseConfigured) {
+    setPaymentError(null);
+
+    // =========================================================================
+    // 1. ONLINE PAYMENT CHECKOUT (RAZORPAY STANDARD WEB CHECKOUT)
+    // =========================================================================
+    if (paymentMethod === 'ONLINE') {
       try {
+        setIsProcessingPayment(true);
+
+        // STEP 1: Backend creates Razorpay order
+        const orderData = await createRazorpayOrder(
+          total,
+          `rcpt_${Date.now()}`,
+          {
+            customer_name: finalName,
+            customer_phone: finalPhone,
+            user_id: user.id,
+            email: user.email || '',
+            items_count: String(items.length),
+          }
+        );
+
+        // STEP 2: Open Razorpay Standard Checkout Modal
+        await launchRazorpayModal({
+          orderData,
+          customerName: finalName,
+          customerEmail: user.email || undefined,
+          customerPhone: finalPhone,
+          description: `Order ${orderNumber} • ${items.length} item(s)`,
+          onSuccess: async (paymentResponse) => {
+            try {
+              // STEP 3: Backend verifies HMAC-SHA256 signature
+              const verification = await verifyRazorpayPayment(paymentResponse);
+              if (!verification.verified) {
+                setIsProcessingPayment(false);
+                setPaymentError(
+                  verification.error || 'Payment signature verification failed. Please contact support.'
+                );
+                return;
+              }
+
+              // Payment successfully verified: record order in Supabase
+              if (isSupabaseConfigured) {
+                const { data: createdOrder, error: orderErr } = await supabase
+                  .from('orders')
+                  .insert({
+                    order_number: orderNumber,
+                    user_id: user?.id || null,
+                    customer_name: finalName,
+                    customer_phone: finalPhone,
+                    shipping_address: fullAddress,
+                    payment_method: 'ONLINE',
+                    payment_status: 'Paid',
+                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                    subtotal,
+                    shipping_fee: shippingFee,
+                    total_amount: total,
+                    status: 'Confirmed',
+                    tracking_note: `Payment verified via Razorpay (${paymentResponse.razorpay_payment_id})`,
+                  })
+                  .select('id, order_number')
+                  .single();
+
+                if (createdOrder && !orderErr) {
+                  const orderItemsPayload = items.map((item) => ({
+                    order_id: createdOrder.id,
+                    product_name: `${item.name} (${item.color.name})`,
+                    product_image: item.image || null,
+                    quantity: item.quantity,
+                    unit_price: item.price,
+                  }));
+                  await supabase.from('order_items').insert(orderItemsPayload);
+                }
+              }
+
+              // Update local state and advance to confirmed screen
+              const order = recordOrder({
+                customerName: finalName,
+                customerPhone: finalPhone,
+                customerEmail: user?.email || profile?.email || undefined,
+                shippingAddress: fullAddress,
+                city: finalCity,
+                paymentMethod: 'ONLINE (Razorpay)',
+                total,
+                itemsCount: items.reduce((s, i) => s + i.quantity, 0),
+              });
+              setPlacedOrder(order);
+              setStep('confirmed');
+            } catch (err: any) {
+              console.error('Post-payment order recording error:', err);
+              setPaymentError('Payment verified, but saving order record failed. Please contact support.');
+            } finally {
+              setIsProcessingPayment(false);
+            }
+          },
+          onError: (errMsg) => {
+            setIsProcessingPayment(false);
+            setPaymentError(errMsg);
+          },
+          onDismiss: () => {
+            setIsProcessingPayment(false);
+            setPaymentError('Payment window was closed. You can retry online payment or choose Cash on Delivery.');
+          },
+        });
+      } catch (err: any) {
+        setIsProcessingPayment(false);
+        setPaymentError(err.message || 'Unable to connect to Razorpay. Please try again.');
+      }
+      return;
+    }
+
+    // =========================================================================
+    // 2. CASH ON DELIVERY (COD) CHECKOUT
+    // =========================================================================
+    try {
+      setIsProcessingPayment(true);
+      if (isSupabaseConfigured) {
         const { data: createdOrder, error: orderErr } = await supabase
           .from('orders')
           .insert({
@@ -345,11 +469,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
             customer_name: finalName,
             customer_phone: finalPhone,
             shipping_address: fullAddress,
-            payment_method: paymentMethod,
+            payment_method: 'COD',
+            payment_status: 'Pending',
             subtotal,
             shipping_fee: shippingFee,
             total_amount: total,
             status: 'Pending',
+            tracking_note: 'Order placed with Cash on Delivery (COD)',
           })
           .select('id, order_number')
           .single();
@@ -362,26 +488,27 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
             quantity: item.quantity,
             unit_price: item.price,
           }));
-
           await supabase.from('order_items').insert(orderItemsPayload);
         }
-      } catch (err) {
-        console.warn('Supabase checkout sync failed:', err);
       }
-    }
 
-    const order = recordOrder({
-      customerName: finalName,
-      customerPhone: finalPhone,
-      customerEmail: user?.email || profile?.email || undefined,
-      shippingAddress: fullAddress,
-      city: finalCity,
-      paymentMethod,
-      total,
-      itemsCount: items.reduce((s, i) => s + i.quantity, 0),
-    });
-    setPlacedOrder(order);
-    setStep('confirmed');
+      const order = recordOrder({
+        customerName: finalName,
+        customerPhone: finalPhone,
+        customerEmail: user?.email || profile?.email || undefined,
+        shippingAddress: fullAddress,
+        city: finalCity,
+        paymentMethod: 'Cash on Delivery (COD)',
+        total,
+        itemsCount: items.reduce((s, i) => s + i.quantity, 0),
+      });
+      setPlacedOrder(order);
+      setStep('confirmed');
+    } catch (err) {
+      console.warn('Supabase checkout sync failed:', err);
+    } finally {
+      setIsProcessingPayment(false);
+    }
   };
 
   const quickRecs = products.slice(0, 3);
@@ -880,28 +1007,108 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
                     </div>
                   </div>
 
+                  {paymentError && (
+                    <div className="flex items-start gap-2.5 rounded-2xl bg-red-500/10 border border-red-500/30 p-3.5 text-xs text-red-500">
+                      <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                      <span className="leading-relaxed">{paymentError}</span>
+                    </div>
+                  )}
+
                   <p className="text-xs font-bold text-ink pt-1">
-                    Payment Method:
+                    Select Payment Method:
                   </p>
 
-                  <div className="rounded-2xl border-2 border-accent bg-accent-soft/30 p-4 shadow-sm">
+                  {/* OPTION 1: ONLINE PAYMENT VIA RAZORPAY */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPaymentMethod('ONLINE');
+                      setPaymentError(null);
+                    }}
+                    className={`w-full text-left rounded-2xl border-2 p-4 shadow-sm transition ${
+                      paymentMethod === 'ONLINE'
+                        ? 'border-accent bg-accent/10 shadow-glow'
+                        : 'border-line bg-surface hover:border-line-hover'
+                    }`}
+                  >
                     <div className="flex items-start gap-3">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-accent-ink mt-0.5">
+                      <div
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full mt-0.5 transition ${
+                          paymentMethod === 'ONLINE'
+                            ? 'bg-accent text-white'
+                            : 'border border-line bg-cloud text-transparent'
+                        }`}
+                      >
                         <Check className="h-3.5 w-3.5 stroke-[3]" />
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-ink">Cash on Delivery (COD)</span>
-                          <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-extrabold text-accent">
-                            ZERO EXTRA FEE
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <span className="text-xs font-bold text-ink">
+                            UPI / NetBanking / Cards
+                          </span>
+                          <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[9px] font-extrabold text-accent uppercase tracking-wider">
+                            Fastest Dispatch
                           </span>
                         </div>
                         <p className="mt-1 text-[11px] text-muted leading-relaxed">
-                          Pay comfortably with cash or UPI scan upon package delivery at your doorstep.
+                          Pay instantly via Google Pay, PhonePe, Paytm, UPI, Visa, Mastercard, RuPay &amp; NetBanking.
+                        </p>
+
+                        <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
+                          <span className="inline-flex items-center gap-1 rounded-md border border-line bg-cloud px-1.5 py-0.5 font-mono text-[10px] font-bold text-ink">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                            UPI
+                          </span>
+                          <span className="inline-flex items-center rounded-md border border-line bg-cloud px-1.5 py-0.5 text-[10px] font-bold text-ink">
+                            GPay / PhonePe
+                          </span>
+                          <span className="inline-flex items-center rounded-md border border-line bg-cloud px-1.5 py-0.5 text-[10px] font-bold text-ink">
+                            Debit &amp; Credit Cards
+                          </span>
+                          <span className="inline-flex items-center gap-1 rounded-md border border-line bg-cloud px-1.5 py-0.5 text-[9px] font-mono font-semibold text-muted">
+                            <Lock className="h-2.5 w-2.5" /> Razorpay Secured
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* OPTION 2: CASH ON DELIVERY (COD) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPaymentMethod('COD');
+                      setPaymentError(null);
+                    }}
+                    className={`w-full text-left rounded-2xl border-2 p-4 shadow-sm transition ${
+                      paymentMethod === 'COD'
+                        ? 'border-accent bg-accent/10 shadow-glow'
+                        : 'border-line bg-surface hover:border-line-hover'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full mt-0.5 transition ${
+                          paymentMethod === 'COD'
+                            ? 'bg-accent text-white'
+                            : 'border border-line bg-cloud text-transparent'
+                        }`}
+                      >
+                        <Check className="h-3.5 w-3.5 stroke-[3]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <span className="text-xs font-bold text-ink">Cash on Delivery (COD)</span>
+                          <span className="rounded-full bg-cloud px-2 py-0.5 text-[9px] font-bold text-muted uppercase tracking-wider border border-line">
+                            Zero Extra Fee
+                          </span>
+                        </div>
+                        <p className="mt-1 text-[11px] text-muted leading-relaxed">
+                          Pay comfortably with cash or UPI QR scan upon courier package delivery at your doorstep.
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 </form>
               )}
 
@@ -1048,14 +1255,34 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenOrders }) => {
             )}
 
             {step === 'payment' && (
-              <div className="border-t border-line bg-surface p-5">
+              <div className="border-t border-line bg-surface p-5 space-y-2">
                 <button
                   type="submit"
                   form="payment-form"
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-btn bg-ink text-sm font-bold text-canvas transition hover:opacity-90 dark:bg-accent dark:text-accent-ink"
+                  disabled={isProcessingPayment}
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-btn bg-accent text-sm font-bold text-accent-ink shadow-glow transition hover:bg-accent-hover disabled:opacity-60"
                 >
-                  <span>Place Order • ₹{total.toLocaleString('en-IN')}</span>
+                  {isProcessingPayment ? (
+                    <>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent-ink border-t-transparent" />
+                      <span>Processing Payment...</span>
+                    </>
+                  ) : paymentMethod === 'ONLINE' ? (
+                    <>
+                      <CreditCard className="h-4 w-4" />
+                      <span>Pay Online with Razorpay • ₹{total.toLocaleString('en-IN')}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4" />
+                      <span>Place Order (COD) • ₹{total.toLocaleString('en-IN')}</span>
+                    </>
+                  )}
                 </button>
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted text-center pt-0.5">
+                  <ShieldCheck className="h-3 w-3 text-emerald-500" />
+                  <span>100% Safe &amp; Secure Checkout • Instant Dispatch Updates</span>
+                </div>
               </div>
             )}
 

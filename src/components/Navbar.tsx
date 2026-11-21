@@ -366,13 +366,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="flex h-10 items-center gap-2 rounded-full border border-line bg-surface px-3 text-xs font-bold text-ink transition hover:border-accent"
+                    className="flex h-10 items-center gap-2 rounded-full border border-line bg-surface px-3.5 text-xs font-bold text-ink transition hover:border-accent"
                     aria-label="User Account"
                   >
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-white text-[11px] font-black">
-                      {profile?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
-                    </div>
-                    <span className="max-w-[90px] truncate text-left">
+                    <User className="h-4 w-4 text-accent shrink-0" />
+                    <span className="max-w-[100px] truncate text-left">
                       {profile?.full_name?.split(' ')[0] || user.email?.split('@')[0]}
                     </span>
                     <ChevronDown className="h-3.5 w-3.5 text-muted" />
@@ -566,11 +564,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                             setIsMobileMenuOpen(false);
                             if (onOpenProfile) onOpenProfile('details');
                           }}
-                          className="flex items-center gap-2 text-left truncate min-w-0"
+                          className="flex items-center gap-2.5 text-left truncate min-w-0"
                         >
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-white font-black text-xs">
-                            {profile?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
-                          </div>
+                          <User className="h-5 w-5 shrink-0 text-accent" />
                           <div className="truncate">
                             <p className="text-xs font-bold text-ink truncate hover:text-accent">
                               {profile?.full_name || 'Member'}

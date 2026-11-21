@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Home, LayoutGrid, ShoppingBag, User } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
 
 interface MobileBottomNavProps {
   activeView: 'home' | 'category' | 'orders' | 'profile' | string;
@@ -20,7 +19,6 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onOpenProfile,
 }) => {
   const { itemCount, isCartOpen, setIsCartOpen, lastAddedTick } = useCart();
-  const { user, profile } = useAuth();
 
   const isHomeActive = activeView === 'home' && !isCartOpen;
   const isCategoryActive = activeView === 'category' && !isCartOpen;
@@ -80,7 +78,6 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       icon: User,
       isActive: isProfileActive,
       onClick: handleProfileClick,
-      userAvatar: user ? (profile?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U') : null,
     },
   ];
 
@@ -105,23 +102,11 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             >
               {/* Icon Container with Badge */}
               <div className="relative">
-                {item.id === 'profile' && item.userAvatar ? (
-                  <div
-                    className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black transition-transform group-hover:scale-110 ${
-                      item.isActive
-                        ? 'bg-accent text-white shadow-glow'
-                        : 'bg-cloud text-ink border border-line'
-                    }`}
-                  >
-                    {item.userAvatar}
-                  </div>
-                ) : (
-                  <Icon
-                    className={`h-5 w-5 transition-transform duration-200 group-hover:scale-110 ${
-                      item.isActive ? 'stroke-[2.5px]' : 'stroke-2'
-                    }`}
-                  />
-                )}
+                <Icon
+                  className={`h-5 w-5 transition-transform duration-200 group-hover:scale-110 ${
+                    item.isActive ? 'stroke-[2.5px]' : 'stroke-2'
+                  }`}
+                />
 
                 {/* Cart Count Badge */}
                 {item.badge !== null && item.badge !== undefined && (
